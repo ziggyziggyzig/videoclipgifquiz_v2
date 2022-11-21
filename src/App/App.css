@@ -1,0 +1,321 @@
+a:link {
+    color: var(--orange);
+}
+
+a:visited {
+    color: var(--orange);
+}
+
+a:hover {
+    background-color: var(--orange);
+    color: var(--darkblue);
+}
+
+a:active {
+    color: var(--yellow);
+    background-color: transparent;
+}
+
+.gridContainer {
+    text-align: center;
+    display: grid;
+    column-gap: 10px;
+    margin-top: 10px;
+}
+
+@media screen and (min-width: 1024px) {
+    .gridContainer {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 1023px) {
+    .gridContainer {
+        grid-template-columns: 1fr;
+    }
+}
+
+.navigatie {
+    /*width: 98vw;*/
+    position: relative;
+    margin: 0 auto;
+    padding: 5px;
+    background-color: var(--blue);
+    color: var(--yellow);
+    height: 10vh;
+    border-bottom: var(--orange) 2px solid;
+}
+
+.content {
+    background-color: var(--darkblue);
+    color: var(--yellow);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    border-style: outset;
+    border-color: var(--lightblue);
+    border-width: 2px;
+}
+
+.titel {
+    font-size: 1.8em;
+}
+
+.titellogo {
+    max-height: 100%;
+}
+
+.scorelijn {
+    border-top: var(--yellow) dotted 1px;
+    border-bottom: none;
+}
+
+.scoretabel {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: 'Syne Mono', monospace;
+    font-weight: 400;
+}
+
+@media screen and (max-width: 600px) {
+    .scoretabel {
+        font-size: 0.9em;
+    }
+}
+
+.scoretabel > thead {
+    font-size: 0.8em;
+    font-style: italic;
+    font-weight: 500;
+}
+
+.scoretabelklein {
+    font-size: 0.8em !important;
+}
+
+.scoretabel > tbody {
+    font-size: 1em;
+}
+
+.scoretabel > tbody tr {
+    animation: fadeIn linear 1s;
+}
+
+/*.scoretabel > tbody tr:hover {*/
+/*    color: var(--orange)*/
+/*}*/
+
+.scoretabel > tbody td:nth-child(odd) {
+    font-weight: 500;
+}
+
+.scoretabel td {
+    text-align: center;
+}
+
+.over {
+    text-align: left;
+}
+
+td.overTableLeft {
+    color: var(--lightblue);
+    margin-right: 10px;
+    line-height: 85%;
+    font-size: 2em;
+    width: 1.5em;
+    text-align: center;
+    vertical-align: center;
+}
+
+td.overTableRight {
+    padding: 10px 0 10px 20px;
+}
+
+.overTableRight b {
+    color: var(--blue)
+}
+
+.over_cookies {
+    color: var(--lightblue)
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.navigatiepijl {
+    color: var(--yellow);
+    font-size: 1.5em;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.navigatiepijldisabled {
+    color: darkgrey;
+    font-size: 1.5em;
+    margin: 0 5px;
+}
+
+.navigatiepijltje {
+    color: var(--yellow);
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.navigatiepijltjedisabled {
+    color: darkgrey;
+    margin: 0 5px;
+}
+
+.navigatiepijlen {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+.navigatiepijlen td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-collapse: collapse;
+    text-align: right;
+}
+
+.navigatiepijlknipper {
+    animation: knipper 1s infinite;
+}
+
+.navInput {
+    background-color: var(--darkblue);
+    /*border: var(--yellow) 2px solid;*/
+    border: 0;
+    color: var(--yellow);
+    font-size: 1em;
+}
+
+@keyframes knipper {
+    0% {
+        color: red
+    }
+    49% {
+        color: red
+    }
+    50% {
+        color: var(--yellow);
+    }
+    99% {
+        color: var(--yellow);
+    }
+    100% {
+        color: red
+    }
+}
+
+.statsKop {
+    cursor: pointer;
+}
+
+.statsLijst {
+    display: none;
+}
+
+.linkslink {
+    text-decoration: unset;
+}
+
+.twitterblok {
+    color: #1DA1F2;
+    background-color: var(--darkblue);
+    border-radius: 5px;
+    padding: 2px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.knop {
+    color: var(--yellow);
+    background-color: var(--darkblue);
+    font-size: 1em;
+    margin: 1em;
+    clear: both;
+    font-family: 'Syne Mono', monospace;
+    font-weight: 400;
+    visibility: visible;
+}
+
+.knop:disabled {
+    background-color: dimgrey;
+}
+
+.prijs {
+    margin-left: 0.4em;
+    font-size: 0.8em;
+    vertical-align: baseline;
+}
+
+.bonus {
+    color: var(--red)
+}
+
+.prijsje {
+    margin-left: 0.3em;
+    font-size: 0.5em;
+    vertical-align: middle;
+}
+
+.zoekresultaten {
+    background-color: var(--darkblue);
+    padding: 5px;
+    border: var(--yellow) dotted 2px;
+}
+
+.zoekresultaat {
+    color: var(--yellow);
+    font-weight: bold;
+}
+
+.statsUitklapLink {
+    color: var(--orange);
+    cursor: pointer;
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.statstabel td {
+    vertical-align: top;
+}
+
+.inzending-extra-row {
+    background-color: var(--darkerblue);
+}
+
+.inzending-eerste-row {
+    border-top: 1px dotted var(--yellow);
+}
+
+.navmenu,.navmenuhidden {
+    background-color: var(--darkblue);
+    border-collapse: collapse;
+    border: 2px var(--yellow) solid;
+    border-radius: 0.5em;
+    padding: 5px;
+    z-index: 99;
+    position: absolute;
+    right: 0.5em;
+    top: 3em;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    display: block;
+    animation: fadeIn linear 1s;
+}
+
+.navmenuhidden {
+    display:none;
+}

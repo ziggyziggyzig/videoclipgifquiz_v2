@@ -1,13 +1,44 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+    --lightblue: #8ecae6;
+    --blue: #219ebc;
+    --darkerblue: #116781;
+    --darkblue: #023047;
+    --yellow: #ffb703;
+    --orange: #fb8500;
+    --red: #ff0000;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+    margin: 0;
+    /*font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',*/
+    /*  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',*/
+    /*  sans-serif;*/
+    font-family: 'Syne', sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-width: 95vw;
+    min-height: 100vh;
+    background-color: var(--lightblue);
+    overflow-x: hidden;
+}
+
+.lichtblauw {
+    color: var(--lightblue)
+}
+
+.blauw {
+    color: var(--blue)
+}
+
+.donkerblauw {
+    color: var(--darkblue)
+}
+
+.geel {
+    color: var(--yellow)
+}
+
+.oranje {
+    color: var(--orange)
 }

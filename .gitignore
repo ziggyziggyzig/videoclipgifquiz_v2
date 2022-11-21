@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/src/firebase/FirebaseConfig.json
+/local/
+/src/Admin/SpotifyClient.js

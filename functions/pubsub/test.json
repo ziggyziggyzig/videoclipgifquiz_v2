@@ -1,0 +1,20 @@
+{
+  "type": "message_create",
+  "id": "1476638973133008911",
+  "created_timestamp": "1640893140477",
+  "message_create": {
+    "target": {
+      "recipient_id": "810545356366839808"
+    },
+    "sender_id": "26002762",
+    "message_data": {
+      "text": "Rolling stones",
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "user_mentions": [],
+        "urls": []
+      }
+    }
+  }
+}
