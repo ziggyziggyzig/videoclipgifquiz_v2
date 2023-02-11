@@ -36,14 +36,98 @@ a:active {
 }
 
 .navigatie {
-    /*width: 98vw;*/
+    width: 100%;
     position: relative;
     margin: 0 auto;
-    padding: 5px;
+    /*padding: 5px;*/
     background-color: var(--blue);
     color: var(--yellow);
     height: 10vh;
     border-bottom: var(--orange) 2px solid;
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    align-items: stretch;
+    column-gap: 10px;
+}
+
+.navigatie_container {
+    width: 100%;
+    position: relative;
+    margin: 0 auto;
+    /*padding: 5px;*/
+    color: var(--yellow);
+    height: 10vh;
+    border-bottom: var(--orange) 2px solid;
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    align-items: stretch;
+    column-gap: 10px;
+    background-color: var(--blue);
+}
+
+.navigatie_container_flash {
+    animation: knipper 1s infinite;
+}
+
+@keyframes knipper {
+    0% {
+        background-color: red;
+    }
+    50% {
+        background-color: var(--blue);
+    }
+    100% {
+        background-color: red;
+    }
+}
+
+.navigatie_links {
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-align: left;
+    margin: auto 10px;
+    line-height: 0.5em;
+}
+
+.navigatie_rechts {
+    flex-grow: 0;
+    flex-shrink: 0;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 2em;
+    margin: auto 10px;
+    cursor: pointer;
+}
+
+.navigatieicoon {
+    font-size: 2em;
+}
+
+.navigatie_userimage {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 1em;
+    position: relative;
+    z-index: 10;
+}
+
+.navigatie_userimage_container {
+    position: relative;
+}
+
+.navigatie_userimage_twitter {
+    position: absolute;
+    z-index: 11;
+    bottom: 0;
+    right: 0;
+    font-size: 0.5em;
+    color: var(--yellow);
+    border-radius: 0.7em;
+    padding: 0.2em;
+    background-image: radial-gradient(circle closest-side at center,rgba(2,48,71,1),rgba(2,48,71,0));
+    /*text-shadow: -1px 0 var(--yellow), 0 1px var(--yellow), 1px 0 var(--yellow), 0 -1px var(--yellow);*/
 }
 
 .content {
@@ -58,11 +142,14 @@ a:active {
 }
 
 .titel {
+    right: 0;
+    position: relative;
     font-size: 1.8em;
 }
 
 .titellogo {
     max-height: 100%;
+    cursor: pointer;
 }
 
 .scorelijn {
@@ -73,8 +160,6 @@ a:active {
 .scoretabel {
     border-collapse: collapse;
     width: 100%;
-    font-family: 'Syne Mono', monospace;
-    font-weight: 400;
 }
 
 @media screen and (max-width: 600px) {
@@ -86,7 +171,6 @@ a:active {
 .scoretabel > thead {
     font-size: 0.8em;
     font-style: italic;
-    font-weight: 500;
 }
 
 .scoretabelklein {
@@ -106,7 +190,7 @@ a:active {
 /*}*/
 
 .scoretabel > tbody td:nth-child(odd) {
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .scoretabel td {
@@ -117,15 +201,6 @@ a:active {
     text-align: left;
 }
 
-td.overTableLeft {
-    color: var(--lightblue);
-    margin-right: 10px;
-    line-height: 85%;
-    font-size: 2em;
-    width: 1.5em;
-    text-align: center;
-    vertical-align: center;
-}
 
 td.overTableRight {
     padding: 10px 0 10px 20px;
@@ -200,24 +275,6 @@ td.overTableRight {
     font-size: 1em;
 }
 
-@keyframes knipper {
-    0% {
-        color: red
-    }
-    49% {
-        color: red
-    }
-    50% {
-        color: var(--yellow);
-    }
-    99% {
-        color: var(--yellow);
-    }
-    100% {
-        color: red
-    }
-}
-
 .statsKop {
     cursor: pointer;
 }
@@ -235,23 +292,7 @@ td.overTableRight {
     background-color: var(--darkblue);
     border-radius: 5px;
     padding: 2px;
-    font-weight: bold;
     cursor: pointer;
-}
-
-.knop {
-    color: var(--yellow);
-    background-color: var(--darkblue);
-    font-size: 1em;
-    margin: 1em;
-    clear: both;
-    font-family: 'Syne Mono', monospace;
-    font-weight: 400;
-    visibility: visible;
-}
-
-.knop:disabled {
-    background-color: dimgrey;
 }
 
 .prijs {
@@ -278,7 +319,6 @@ td.overTableRight {
 
 .zoekresultaat {
     color: var(--yellow);
-    font-weight: bold;
 }
 
 .statsUitklapLink {
@@ -292,15 +332,7 @@ td.overTableRight {
     vertical-align: top;
 }
 
-.inzending-extra-row {
-    background-color: var(--darkerblue);
-}
-
-.inzending-eerste-row {
-    border-top: 1px dotted var(--yellow);
-}
-
-.navmenu,.navmenuhidden {
+.navmenu, .navmenuhidden {
     background-color: var(--darkblue);
     border-collapse: collapse;
     border: 2px var(--yellow) solid;
@@ -310,12 +342,46 @@ td.overTableRight {
     position: absolute;
     right: 0.5em;
     top: 3em;
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
     display: block;
     animation: fadeIn linear 1s;
 }
 
+.navigatie_usermenu, .navigatie_menu {
+    background-color: var(--darkblue);
+    border-collapse: collapse;
+    border: 2px var(--yellow) solid;
+    border-radius: 0.5em;
+    padding: 5px;
+    z-index: 99;
+    position: absolute;
+    display: block;
+    animation: fadeIn linear 0.2s;
+    top: 4em;
+}
+
+
+.navigatie_usermenu {
+    right: 4em;
+}
+
+.navigatie_menu {
+    right: 0.5em;
+}
+
 .navmenuhidden {
-    display:none;
+    display: none;
+}
+
+.App {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    border-collapse: collapse;
+}
+
+h1,h2,h3 {
+    border-bottom: 1px solid var(--orange);
 }

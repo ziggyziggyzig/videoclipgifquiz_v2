@@ -1,0 +1,38 @@
+.steun {
+    text-align: center;
+    display: grid;
+    column-gap: 10px;
+    background-color: var(--darkblue);
+    color: var(--yellow);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    border-style: outset;
+    border-color: var(--lightblue);
+    border-width: 2px;
+}
+
+.steun_grid_container {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 2em;
+    row-gap: 2em;
+    justify-items: stretch;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+.steun_griditem_links {
+    text-align: center;
+    grid-column: 1/2;
+    font-size: 3em;
+}
+
+.steun_griditem_rechts {
+    text-align: left;
+    grid-column: 2/3;
+}
+
+.steun_image {
+    float: right;
+}

@@ -1,0 +1,22 @@
+.navigatie_menu_table tr > td:first-child {
+    text-align: right;
+    padding-right: 5px;
+}
+
+.navigatie_menu_table tr > td:last-child {
+    text-align: center;
+}
+
+.navigatie_menu_table hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, var(--yellow) 15%, var(--yellow) 85%, rgba(0, 0, 0, 0) 100%);
+}
+
+.navigatie_imitatie_link {
+    cursor: pointer;
+}
+
+.navigatie_imitatie_link_disabled {
+    color: gray;
+}

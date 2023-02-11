@@ -1,0 +1,63 @@
+.opgave {
+    background-color: var(--darkblue);
+    color: var(--yellow);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    border-style: outset;
+    border-color: var(--lightblue);
+    border-width: 2px;
+    font-size: 0.9em;
+}
+
+.opgave_voet_sluitdatum {
+}
+
+.opgave_invulding_retour,.opgave_invulding_retour_inactief{
+    color: var(--yellow);
+    background-color: var(--darkblue);
+    padding: 5px;
+    min-width: 350px;
+    height: 1em;
+    display: inline-block;
+}
+
+.opgave_invulding_retour {
+    border-top: 1px solid var(--darkerblue);
+    border-right: 3px solid var(--darkerblue);
+    border-bottom: 3px solid var(--darkerblue);
+    border-left: 1px solid var(--darkerblue);
+    border-radius: 2px;
+}
+
+.opgave_invulding_retour_inactief {
+    border: none;
+}
+
+.opgave_invulding_tekstveld {
+    color: var(--yellow);
+    background-color: var(--darkblue);
+    padding: 5px;
+    min-width: 350px;
+    height: 1em;
+    display: inline-block;
+    border-top: 1px solid var(--darkerblue);
+    border-right: 3px solid var(--darkerblue);
+    border-bottom: 3px solid var(--darkerblue);
+    border-left: 1px solid var(--darkerblue);
+    border-radius: 2px;
+    margin: 5px;
+}
+
+.opgave_invulding_knop {
+    background-color: var(--orange);
+    color: var(--darkblue);
+    padding: 5px;
+    display: inline-block;
+    border-top: 1px solid var(--darkerblue);
+    border-right: 3px solid var(--darkerblue);
+    border-bottom: 3px solid var(--darkerblue);
+    border-left: 1px solid var(--darkerblue);
+    border-radius: 2px;
+    margin: 5px;
+}

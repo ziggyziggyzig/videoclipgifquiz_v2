@@ -1,0 +1,19 @@
+.quiz_container {
+    text-align: center;
+    display: grid;
+    column-gap: 10px;
+    margin-top: 10px;
+}
+
+@media screen and (min-width: 1024px) {
+    .quiz_container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 1023px) {
+    .quiz_container {
+        grid-template-columns: 1fr;
+    }
+}
+

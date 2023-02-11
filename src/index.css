@@ -1,4 +1,6 @@
-:root {
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,400;0,700;1,500;1,700&family=Roboto+Slab:wght@400;700&family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+                                                                                                                                                                                                              :root {
     --lightblue: #8ecae6;
     --blue: #219ebc;
     --darkerblue: #116781;
@@ -8,13 +10,38 @@
     --red: #ff0000;
 }
 
+.font_serif_normal {
+    font-family: 'Roboto Slab', serif;
+    font-weight: 400;
+}
+
+.font_serif_bold {
+    font-family: 'Roboto Slab', serif;
+    font-weight: 700;
+}
+
+.font_sans_normal {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+.font_sans_bold {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+}
+
+.font_mono_normal {
+    font-family: 'Roboto Mono', sans-serif;
+    font-weight: 400;
+}
+
+.font_mono_bold {
+    font-family: 'Roboto Mono', sans-serif;
+    font-weight: 700;
+}
+
 body {
     margin: 0;
-    /*font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',*/
-    /*  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',*/
-    /*  sans-serif;*/
-    font-family: 'Syne', sans-serif;
-    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-width: 95vw;
@@ -24,21 +51,25 @@ body {
 }
 
 .lichtblauw {
-    color: var(--lightblue)
+    color: var(--lightblue) !important
 }
 
 .blauw {
-    color: var(--blue)
+    color: var(--blue) !important
 }
 
 .donkerblauw {
-    color: var(--darkblue)
+    color: var(--darkblue) !important
 }
 
 .geel {
-    color: var(--yellow)
+    color: var(--yellow) !important
 }
 
 .oranje {
-    color: var(--orange)
+    color: var(--orange) !important
+}
+
+.rood {
+    color: red !important;
 }

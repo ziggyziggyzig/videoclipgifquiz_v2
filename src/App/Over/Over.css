@@ -1,0 +1,30 @@
+.over {
+    background-color: var(--darkblue);
+    color: var(--yellow);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    border-style: outset;
+    border-color: var(--lightblue);
+    border-width: 2px;
+    font-size: 0.9em;
+}
+
+.blauw {
+    color: var(--lightblue);
+}
+
+td.overTableLeft {
+    color: var(--lightblue);
+    margin-right: 10px;
+    line-height: 85%;
+    font-size: 2em;
+    width: 1.5em;
+    text-align: center;
+    vertical-align: top;
+    transform: translateY(0.5em);
+}
+
+td.overTableRight {
+    padding: 10px 0 10px 20px;
+}
