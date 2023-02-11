@@ -75,7 +75,8 @@ const Quiz = () => {
                         SERIES_LIST,
                         WIN_COUNT,
                         FAST_FIVE,
-                        WIN_LIST
+                        WIN_LIST,
+                        donateur
                     } = user.data()
                     if (huidigeRondeNummer && WIN_LIST && WIN_LIST.length > 0) {
                         let i = WIN_LIST.findIndex(o => o.ronde === huidigeRondeNummer)
@@ -95,8 +96,8 @@ const Quiz = () => {
                         TWITTER:!!TWITTER_UID,
                         GOOGLE:!!GOOGLE_UID,
                         MASTODON:!!MASTODON_ACCOUNT,
-                        WIN_LIST:WIN_LIST || []
-
+                        WIN_LIST:WIN_LIST || [],
+                        donateur:donateur || false
                     })
                 }
                 dispatchUsers({type:"SET", usersData:toContext})

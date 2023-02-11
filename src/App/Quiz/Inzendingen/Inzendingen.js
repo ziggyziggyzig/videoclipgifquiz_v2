@@ -104,7 +104,7 @@ const Inzending = ({inzending}) => {
                 {inzending.medium==='google' && <i className="fab fa-google inzendingen_provider geel"/>}
                 {inzending.medium==='mastodon' && <i className="fab fa-mastodon inzendingen_provider geel"/>}
             </td>
-            <td style={{textAlign:'left'}}><Spelerlink speler={user.TWITTER_HANDLE} prijzen={true}
+            <td style={{textAlign:'left'}}><Spelerlink user_id={user.USER_ID} prijzen={true}
                                                        naam={false}/></td>
             <td style={{textAlign:'right'}}>
                 {!showDetails && <>

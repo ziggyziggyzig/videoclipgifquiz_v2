@@ -1,6 +1,7 @@
-import {useEffect, useState} from "react"
-import {collection, getDocs, query, limit, orderBy, getDoc, doc} from "firebase/firestore"
+import {useContext, useEffect, useState} from "react"
+import {collection, getDocs, query, limit, orderBy, where} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
+import {UsersContext} from "../../Contexts/Users"
 
 const Prijzen = ({user_id}) => {
     const [snelste, setSnelste] = useState(false)
@@ -10,89 +11,96 @@ const Prijzen = ({user_id}) => {
     const [bonus, setBonus] = useState(0)
     const [donateur, setDonateur] = useState(false)
     const [cadeau, setCadeau] = useState(0)
+    const [{usersData}] = useContext(UsersContext)
 
     useEffect(() => {
         const fetchData = async () => {
+            let all_users = usersData
+            let this_user=all_users.find(o=>o.USER_ID===user_id)
 
             // snelste
-            let qSnelste = query(collection(db, 'stats', 'inzendingen', 'speed'), orderBy('speed', 'asc'), limit(1))
+            let qSnelste = query(collection(db, 'inzendingen'), where('beoordeling', '==', 3), orderBy('SPEED', 'asc'), limit(1))
             let sSnelste = await getDocs(qSnelste)
             sSnelste.forEach(doc => {
                 let data = doc.data()
-                if (data.gebruiker === user_id) setSnelste(true)
+                if (data.USER_ID === user_id) setSnelste(true)
                 return true
             })
 
             // meeste
-            let qMeeste = query(collection(db, 'stats', 'inzendingen', 'aantal'), orderBy('count', 'desc'), limit(5))
-            let sMeeste = await getDocs(qMeeste)
+            // let qMeeste = query(collection(db, 'users'), orderBy('CORRECT_COUNT', 'desc'), limit(5))
+            // let sMeeste = await getDocs(qMeeste)
             let vorigeCount
 
-            sMeeste.forEach(doc => {
-                let data = doc.data()
-                if (!vorigeCount || data.count === vorigeCount) {
-                    data.gebruiker === user_id && setMeeste(true)
+            all_users.sort((a, b) => b.CORRECT_COUNT - a.CORRECT_COUNT)
+            all_users.forEach(data => {
+                if (!vorigeCount || data.CORRECT_COUNT === vorigeCount) {
+                    data.USER_ID === user_id && setMeeste(true)
                 } else {
                     return true
                 }
-                vorigeCount = data.count
+                vorigeCount = data.CORRECT_COUNT
                 return true
             })
 
             // winst
-            let qWinste = query(collection(db, 'stats', 'winnaars', 'aantal'), orderBy('count', 'desc'), limit(5))
-            let sWinste = await getDocs(qWinste)
-            vorigeCount = undefined
 
-            sWinste.forEach(doc => {
-                let data = doc.data()
-                if (!vorigeCount || data.count === vorigeCount) {
-                    data.gebruiker === user_id && setWinste(true)
+            vorigeCount = undefined
+            all_users.sort((a, b) => b.WIN_COUNT - a.WIN_COUNT)
+
+            all_users.forEach(data => {
+                if (!vorigeCount || data.WIN_COUNT === vorigeCount) {
+                    data.USER_ID === user_id && setWinste(true)
                 } else {
                     return true
                 }
-                vorigeCount = data.count
+                vorigeCount = data.WIN_COUNT
                 return true
             })
 
             // serie
-            let qSerie = query(collection(db, 'stats', 'inzendingen', 'series'), orderBy('lengte', 'desc'), limit(5))
-            let sSerie = await getDocs(qSerie)
             vorigeCount = undefined
+            let alle_series=[]
+            for (let user of all_users) {
+                if (user.SERIES_LIST && user.SERIES_LIST.length>0) {
+                    for (let serie of user.SERIES_LIST) {
+                        alle_series.push({USER_ID:user.USER_ID,SERIES_LENGTH:serie.LENGTH})
+                    }
+                }
+            }
 
-            sSerie.forEach(doc => {
-                let data = doc.data()
-                if (!vorigeCount || data.lengte === vorigeCount) {
-                    data.gebruiker === user_id && setSerie(true)
+            alle_series.sort((a,b)=>b.SERIES_LENGTH-a.SERIES_LENGTH)
+            alle_series.forEach(data => {
+                if (!vorigeCount || data.SERIES_LENGTH === vorigeCount) {
+                    data.USER_ID === user_id && setSerie(true)
                 } else {
                     return true
                 }
-                vorigeCount = data.lengte
+                vorigeCount = data.SERIES_LENGTH
                 return true
             })
 
             // bonus
-            let qSpeler = query(doc(db, 'users', user_id))
-            let sSpeler = await getDoc(qSpeler)
-            if (sSpeler.data().BONUS_COUNT) {
-                setBonus(sSpeler.data().BONUS_COUNT)
+            if (this_user.BONUS_COUNT) {
+                setBonus(this_user.BONUS_COUNT)
             }
-            if (sSpeler.data().donateur) {
+            if (this_user.donateur) {
                 setDonateur(true)
             }
-            if (sSpeler.data().TAART_COUNT) {
-                setCadeau(sSpeler.data().TAART_COUNT)
+            if (this_user.TAART_COUNT) {
+                setCadeau(this_user.TAART_COUNT)
             }
             return true
         }
 
-        fetchData()
-    }, [user_id])
+        usersData && usersData.length>0 && fetchData()
+    }, [user_id,usersData])
 
     return (
         <>
             {bonus > 0 &&
-                <span className="prijs"><i className="far fa-star" style={{marginRight:'0em'}} title="Bonusronde beantwoord"/>{bonus}</span>
+                <span className="prijs"><i className="far fa-star" style={{marginRight:'0em'}}
+                                           title="Bonusronde beantwoord"/>{bonus}</span>
             }
             {snelste && <i className="far fa-clock prijs" title="Snelste antwoord ooit"/>}
             {meeste && <i className="far fa-check-square prijs" title="Meeste juiste antwoorden"/>}

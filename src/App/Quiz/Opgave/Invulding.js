@@ -37,7 +37,7 @@ const Invulding = () => {
         <form onSubmit={verstuurAntwoord}>
             <p>
                 <input type="text" className="opgave_invulding_tekstveld font_mono_normal" value={antwoord}
-                       onChange={(e) => antwoordVeranderd(e)}/>
+                       onChange={(e) => antwoordVeranderd(e)} autoFocus={true}/>
                 <input type="submit" value="verstuur" className="opgave_invulding_knop font_sans_bold"/>
             </p>
             <p>
