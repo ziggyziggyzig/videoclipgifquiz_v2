@@ -70,6 +70,7 @@ const Quiz = () => {
                         GOOGLE_UID,
                         MASTODON_ACCOUNT,
                         MASTODON_URL,
+                        MASTODON_DISPLAYNAME,
                         BONUS_COUNT,
                         DISPLAYNAME,
                         OWN_ACCOUNT,
@@ -101,6 +102,7 @@ const Quiz = () => {
                         GOOGLE:!!GOOGLE_UID,
                         MASTODON:!!MASTODON_ACCOUNT,
                         MASTODON_URL:MASTODON_URL || null,
+                        MASTODON_DISPLAYNAME: MASTODON_DISPLAYNAME || null,
                         WIN_LIST:WIN_LIST || [],
                         donateur:donateur || false
                     })
