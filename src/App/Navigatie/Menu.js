@@ -33,7 +33,7 @@ const Menu = ({showMenu}) => {
                     <i className={`far fa-circle-left`} title="vorige ronde"/>
                 </td>
             </tr>
-            <tr className={!toonRondeNummer || !toonRondeNummer >= huidigeRondeNummer ? 'navigatie_imitatie_link_disabled' : 'navigatie_imitatie_link'}
+            <tr className={toonRondeNummer < huidigeRondeNummer ? 'navigatie_imitatie_link' : 'navigatie_imitatie_link_disabled'}
                 onClick={toonRondeNummer < huidigeRondeNummer ? () => window.location = `/ronde/${toonRondeNummer + 1}` : null}
             >
                 <td>

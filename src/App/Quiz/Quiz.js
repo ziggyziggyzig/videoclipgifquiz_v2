@@ -49,6 +49,9 @@ const Quiz = () => {
 
     useEffect(() => {
         if (huidigeRondeNummer) {
+            if (rondeId && (rondeId<1 || rondeId>=huidigeRondeNummer)) {
+                window.location.href = '/'
+            }
             if (rondeId && rondeId <= huidigeRondeNummer) {
                 setRound(rondeId)
             } else {
