@@ -69,6 +69,7 @@ const Quiz = () => {
                         TWITTER_UID,
                         GOOGLE_UID,
                         MASTODON_ACCOUNT,
+                        MASTODON_URL,
                         BONUS_COUNT,
                         DISPLAYNAME,
                         OWN_ACCOUNT,
@@ -99,6 +100,7 @@ const Quiz = () => {
                         TWITTER:!!TWITTER_UID,
                         GOOGLE:!!GOOGLE_UID,
                         MASTODON:!!MASTODON_ACCOUNT,
+                        MASTODON_URL:MASTODON_URL || null,
                         WIN_LIST:WIN_LIST || [],
                         donateur:donateur || false
                     })

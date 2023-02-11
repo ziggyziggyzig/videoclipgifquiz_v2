@@ -1,5 +1,5 @@
 import {useContext, useEffect, useState} from "react"
-import { collection, onSnapshot, query, where} from "firebase/firestore"
+import {collection, onSnapshot, query, where} from "firebase/firestore"
 import {db} from "../../../Firebase/Firebase"
 import {Spelerlink} from "../../Links/Links"
 import moment from "moment-timezone"
@@ -11,7 +11,7 @@ import {ToonRondeContext} from "../../../Contexts/ToonRonde"
 
 const Inzendingen = () => {
     const [inzendingen, setInzendingen] = useState([])
-    const [{toonRondeNummer}]=useContext(ToonRondeContext)
+    const [{toonRondeNummer}] = useContext(ToonRondeContext)
 
     useEffect(() => {
         const q = query(collection(db, "inzendingen"), where("ronde", "==", parseInt(toonRondeNummer, 10)))
@@ -99,10 +99,17 @@ const Inzending = ({inzending}) => {
         <tr key={inzending.id} className={showDetails ? 'inzendingen_details' : undefined}>
             <td style={{textAlign:'right'}}><Spelerlink user_id={user.USER_ID} prijzen={false}
                                                         eigenLink={eigenInzending}/></td>
-            <td>{inzending.medium==='twitter' && <i className="fab fa-twitter inzendingen_provider inzendingen_doorklikker geel"
-                                    onClick={() => window.open(`https://twitter.com/${user.TWITTER_HANDLE}`)}/>}
-                {inzending.medium==='google' && <i className="fab fa-google inzendingen_provider geel"/>}
-                {inzending.medium==='mastodon' && <i className="fab fa-mastodon inzendingen_provider geel"/>}
+            <td>{inzending.medium === 'twitter' &&
+                <i className="fab fa-twitter inzendingen_provider inzendingen_doorklikker geel"
+                   onClick={() => window.open(`https://twitter.com/${user.TWITTER_HANDLE}`)}/>}
+                {inzending.medium === 'google' && <i className="fab fa-google inzendingen_provider geel"/>}
+                {inzending.medium === 'mastodon' && (user.MASTODON_URL ?
+                    <i className="fab fa-mastodon inzendingen_provider inzendingen_doorklikker geel"
+                       onClick={() => window.open(`${user.MASTODON_URL}`)}/>
+                    :
+                    <i className="fab fa-mastodon inzendingen_provider geel"/>
+                )
+                }
             </td>
             <td style={{textAlign:'left'}}><Spelerlink user_id={user.USER_ID} prijzen={true}
                                                        naam={false}/></td>
@@ -110,11 +117,11 @@ const Inzending = ({inzending}) => {
                 {!showDetails && <>
                     <div className="inzendingen_datum_lang">
                         {moment.unix(Math.floor(inzending.timestamp / 1000)).format(datumFormaat.l)}
-                        <span style={{fontSize:'0.6em',color:'rgba(0,0,0,0)'}}>.xxx</span>
+                        <span style={{fontSize:'0.6em', color:'rgba(0,0,0,0)'}}>.xxx</span>
                     </div>
                     <div className="inzendingen_datum_kort">
                         {moment.unix(Math.floor(inzending.timestamp / 1000)).format(datumFormaat.s)}
-                        <span style={{fontSize:'0.6em',color:'rgba(0,0,0,0)'}}>.xxx</span>
+                        <span style={{fontSize:'0.6em', color:'rgba(0,0,0,0)'}}>.xxx</span>
                     </div>
                 </>}
             </td>
