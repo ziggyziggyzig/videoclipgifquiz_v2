@@ -47,7 +47,7 @@ const Speler = () => {
                 setNewDisplayName(spelerDoc.data().DISPLAYNAME)
             }
         }
-        getData()
+        spelerId && getData()
     }, [spelerId, currentUserData])
 
     const toggle = (elementId, c) => {
@@ -146,25 +146,25 @@ const Speler = () => {
                     </>
                 }
 
-                {spelerData.CORRECT_FIRST &&
+                {spelerData.CORRECT_FIRST && spelerData.CORRECT_FIRST.timestamp &&
                     <>
                         <Links>
                             eerste antwoord
                         </Links>
                         <Rechts>
-                            {DateTime.fromMillis(spelerData.CORRECT_FIRST.timestamp).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}<br/>
+                            {DateTime.fromMillis(parseInt(spelerData.CORRECT_FIRST.timestamp,10)).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}<br/>
                             <Rondelink ronde={spelerData.CORRECT_FIRST.ronde} text="ronde"/>
                         </Rechts>
                     </>
                 }
 
-                {spelerData.CORRECT_LAST &&
+                {spelerData.CORRECT_LAST && spelerData.CORRECT_LAST.timestamp &&
                     <>
                         <Links>
                             recentste antwoord
                         </Links>
                         <Rechts>
-                            {DateTime.fromMillis(spelerData.CORRECT_LAST.timestamp).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}<br/>
+                            {DateTime.fromMillis(parseInt(spelerData.CORRECT_LAST.timestamp,10)).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)}<br/>
                             <Rondelink ronde={spelerData.CORRECT_LAST.ronde} text="ronde"/>
                         </Rechts>
                     </>
@@ -174,7 +174,7 @@ const Speler = () => {
                     totaal aantal antwoorden
                 </Links>
                 <Rechts>
-                    {spelerData.CORRECT_COUNT || 0} {spelerData.CORRECT_COUNT && <>({Math.round(spelerData.CORRECT_COUNT / huidigeRondeNummer * 1000) / 10}%
+                    {spelerData.CORRECT_COUNT || 0} {spelerData.CORRECT_COUNT && spelerData.CORRECT_COUNT>0 && <>({Math.round(spelerData.CORRECT_COUNT / huidigeRondeNummer * 1000) / 10}%
                     van alle rondes)</>}
                 </Rechts>
 
@@ -191,9 +191,9 @@ const Speler = () => {
                 </Rechts>
 
                 {spelerData.WIN_LIST && spelerData.WIN_LIST.length > 0 && spelerData.WIN_LIST.map(w =>
-                    <Fragment key={w.timestamp}>
+                    w.timestamp && <Fragment key={w.timestamp}>
                         <Links list="win_count_list">
-                            {DateTime.fromMillis(w.timestamp).toLocaleString(DateTime.DATE_FULL)}
+                            {DateTime.fromMillis(parseInt(w.timestamp,10)).toLocaleString(DateTime.DATE_FULL)}
                         </Links>
                         <Rechts list="win_count_list">
                             <Rondelink ronde={w.ronde} text="ronde"
@@ -213,9 +213,9 @@ const Speler = () => {
                                                     onClick={() => toggle('bonus_count_list', 'table-row')}>(klik voor een overzicht)</span></> : 0}
                 </Rechts>
                 {spelerData.BONUS_LIST && spelerData.BONUS_LIST.length > 0 && spelerData.BONUS_LIST.map(w =>
-                    <Fragment key={w.timestamp}>
+                    w.timestamp && <Fragment key={w.timestamp}>
                         <Links list="bonus_count_list">
-                            {DateTime.fromMillis(w.timestamp).toLocaleString(DateTime.DATE_FULL)}
+                            {DateTime.fromMillis(parseInt(w.timestamp,10)).toLocaleString(DateTime.DATE_FULL)}
                         </Links>
                         <Rechts list="bonus_count_list">
                             <Rondelink ronde={w.ronde} text="ronde"
@@ -247,12 +247,12 @@ const Speler = () => {
                                       onClick={() => toggle('fast_five_list', 'table-row')}>(klik voor een overzicht)</span>}
                         </Rechts>
                         {spelerData.FAST_FIVE && spelerData.FAST_FIVE.length > 0 && spelerData.FAST_FIVE.map(w =>
-                            <Fragment key={w.timestamp}>
+                            w.timestamp && w.speed && <Fragment key={w.timestamp}>
                                 <Links list="fast_five_list">
-                                    {DateTime.fromMillis(w.timestamp).toLocaleString(DateTime.DATE_FULL)}
+                                    {DateTime.fromMillis(parseInt(w.timestamp,10)).toLocaleString(DateTime.DATE_FULL)}
                                 </Links>
                                 <Rechts list="fast_five_list">
-                                    {Duration.fromMillis(w.speed).toFormat("s.SSS's'")}&nbsp;
+                                    {Duration.fromMillis(parseInt(w.speed,10)).toFormat("s.SSS's'")}&nbsp;
                                     <Rondelink ronde={w.ronde} text="ronde"
                                                inhoud={w.ronde < huidigeRondeNummer}/>
                                 </Rechts>
@@ -272,12 +272,12 @@ const Speler = () => {
                                       onClick={() => toggle('slow_five_list', 'table-row')}>(klik voor een overzicht)</span>}
                         </Rechts>
                         {spelerData.SLOW_FIVE && spelerData.SLOW_FIVE.length > 0 && spelerData.SLOW_FIVE.map(w =>
-                            <Fragment key={w.timestamp}>
+                            w.timestamp && w.speed && <Fragment key={w.timestamp}>
                                 <Links list="slow_five_list">
-                                    {DateTime.fromMillis(w.timestamp).toLocaleString(DateTime.DATE_FULL)}
+                                    {DateTime.fromMillis(parseInt(w.timestamp,10)).toLocaleString(DateTime.DATE_FULL)}
                                 </Links>
                                 <Rechts list="slow_five_list">
-                                        {Duration.fromMillis(w.speed).toFormat("h'h' m'm' s.SSS's'")}&nbsp;
+                                        {Duration.fromMillis(parseInt(w.speed,10)).toFormat("h'h' m'm' s.SSS's'")}&nbsp;
                                     <Rondelink ronde={w.ronde} text="ronde"
                                                inhoud={w.ronde < huidigeRondeNummer}/>
                                 </Rechts>
@@ -325,7 +325,7 @@ const Speler = () => {
                                 <Rechts list="series_list_list">
                                     <Rondelink ronde={w.SERIES[0].ronde} text="rondes"/> t/m <Rondelink
                                     ronde={w.SERIES[w.SERIES.length - 1].ronde}/>
-                                    {w.SERIES[w.SERIES.length - 1].ronde === huidigeRondeNummer && ' *'}
+                                    {w.SERIES[w.SERIES.length - 1].ronde >= huidigeRondeNummer-1 && ' *'}
                                 </Rechts>
                             </Fragment>
                         )}
