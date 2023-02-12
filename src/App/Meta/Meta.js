@@ -28,10 +28,7 @@ const Meta = () =>
                 Op dit moment kun je meedoen met een <b className='blauw'>Twitter-</b>, een <b className='blauw'>Google-</b> of een <b className='blauw'>Mastodon-account</b>.<br/>
                 Klik rechtsboven op het poppetje en log in met Twitter of Google. Dan kan je direct op de website, met het invulveld onder de
                 opgave, je antwoord insturen.<br/>
-                Je kan ook op Twitter een <b className='blauw'>DM</b> sturen naar <a
-                href="https://twitter.com/messages/compose?recipient_id=810545356366839808"
-                target="_new">@videoclipquiz</a> met je antwoord.<br/>
-                Op Mastodon stuur je een DM naar <a href="https://mastodon.nl/@videoclipquiz" target="_new">@videoclipquiz@mastodon.nl</a>. Let daar goed op dat de <b className="blauw">zichtbaarheid</b> van je bericht op "Direct bericht" staat (<i className="fa-solid fa-earth-americas"/> is fout, <i className="fa-solid fa-at"/> is goed).
+                Je kan ook op Mastodon een DM met je antwoord sturen naar <a href="https://mastodon.nl/@videoclipquiz" target="_new">@videoclipquiz@mastodon.nl</a>. Let daar goed op dat de <b className="blauw">zichtbaarheid</b> van je bericht op "Direct bericht" staat (<i className="fa-solid fa-earth-americas"/> is fout, <i className="fa-solid fa-at"/> is goed).
             </Rechts>
             <Links>
                 <i className="fa-regular fa-comments"/>

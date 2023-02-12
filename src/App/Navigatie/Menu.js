@@ -103,7 +103,7 @@ const Menu = ({showMenu}) => {
                         <i className={`far fa-thumbs-up`} title="steun de quiz"/>
                     </td>
                 </tr>
-                {currentUserData.OWN_ACCOUNT &&
+                {currentUserData && currentUserData.OWN_ACCOUNT &&
                     <>
                         <tr>
                             <td colSpan={2}>

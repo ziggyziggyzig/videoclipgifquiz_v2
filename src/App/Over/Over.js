@@ -34,11 +34,6 @@ const Over = () => {
                 <td className="font_serif_normal overTableRight">
                     Je hebt een Twitter-, Google- of Mastodon-account nodig om mee te doen.<br/>
                     <ul>
-                        <li><i className="fab fa-twitter oranje"/> twitter: stuur een <b
-                            className="blauw">DM</b> naar <a
-                            href="https://twitter.com/messages/compose?recipient_id=810545356366839808"
-                            target="_new">@videoclipquiz</a> met je antwoord.
-                        </li>
                         <li><i className="fab fa-twitter oranje"/> twitter: klik op de website rechtsboven op <i
                             className="fas fa-user"/> en log in met je Twitter-account. Dan kan je onder de opgave je
                             antwoord insturen.
