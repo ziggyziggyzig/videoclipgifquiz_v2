@@ -102,7 +102,7 @@ const Speler = () => {
 
                 <Lijn/>
 
-                {spelerData.TWITTER_UID &&
+                {spelerData.TWITTER_UID_STR &&
                     <>
                         <Links>
                             twitterhandle

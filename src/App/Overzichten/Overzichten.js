@@ -20,6 +20,7 @@ const Overzichten = () => {
             for (let user of users.docs) {
                 let {
                     TWITTER_UID,
+                    TWITTER_UID_STR,
                     GOOGLE_UID,
                     MASTODON_ACCOUNT,
                     BONUS_COUNT,
@@ -48,7 +49,7 @@ const Overzichten = () => {
                     SERIES_LIST:SERIES_LIST || [],
                     WIN_COUNT:WIN_COUNT || 0,
                     FAST_FIVE:FAST_FIVE || [],
-                    TWITTER:!!TWITTER_UID,
+                    TWITTER:!!TWITTER_UID_STR,
                     GOOGLE:!!GOOGLE_UID,
                     MASTODON:!!MASTODON_ACCOUNT,
                     WIN_LIST:WIN_LIST || []

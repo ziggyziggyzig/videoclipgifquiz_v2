@@ -11,7 +11,7 @@ import {
 } from "@mui/material"
 
 import {Fragment, useEffect, useState} from "react"
-import {collection, doc, getDocs, updateDoc, setDoc, deleteDoc} from "firebase/firestore"
+import {collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, where} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 
 const Users = () => {
@@ -118,7 +118,6 @@ const MergeUsers = ({users, done}) => {
             USER_ID:users[order[0]].USER_ID,
             AUTH_UID:AUTH_IDS,
             DISPLAYNAME:users[order[0]].DISPLAYNAME,
-            OWN_ACCOUNT:users[order[0]].OWN_ACCOUNT,
             donateur:users[order[0]].donateur || users[order[1]].donateur || false,
             GOOGLE_DISPLAYNAME:users[order[0]].GOOGLE_DISPLAYNAME || users[order[1]].GOOGLE_DISPLAYNAME || null,
             GOOGLE_EMAIL:users[order[0]].GOOGLE_EMAIL || users[order[1]].GOOGLE_EMAIL || null,
@@ -132,7 +131,9 @@ const MergeUsers = ({users, done}) => {
             TWITTER_DISPLAYNAME:users[order[0]].TWITTER_DISPLAYNAME || users[order[1]].TWITTER_DISPLAYNAME || null,
             TWITTER_HANDLE:users[order[0]].TWITTER_HANDLE || users[order[1]].TWITTER_HANDLE || null,
             TWITTER_PHOTOURL:users[order[0]].TWITTER_PHOTOURL || users[order[1]].TWITTER_PHOTOURL || null,
-            TWITTER_UID:users[order[0]].TWITTER_UID || users[order[1]].TWITTER_UID || null
+            TWITTER_UID:users[order[0]].TWITTER_UID || users[order[1]].TWITTER_UID || null,
+            TWITTER_UID_STR:users[order[0]].TWITTER_UID_STR || users[order[1]].TWITTER_UID_STR || null,
+
         })
     }, [users, order])
 
@@ -144,6 +145,10 @@ const MergeUsers = ({users, done}) => {
     }
 
     const opslaan = async () => {
+        let z=await getDocs(query(collection(db,'inzendingen'),where('USER_ID','==',users[order[1]].USER_ID)))
+        for (let f of z.docs) {
+            await updateDoc(doc(db,'inzendingen',f.id),{USER_ID:mergedUser.USER_ID})
+        }
         await setDoc(doc(db, 'users_backup', `${users[order[0]].USER_ID}-${new Date().getTime()}`), users[order[0]])
         await setDoc(doc(db, 'users_backup', `${users[order[1]].USER_ID}-${new Date().getTime()}`), users[order[1]])
         await updateDoc(doc(db, 'users', mergedUser.USER_ID), mergedUser)
@@ -160,8 +165,6 @@ const MergeUsers = ({users, done}) => {
                         <Typography variant="body1"><b>auth_uids:</b> {JSON.stringify(users[i].AUTH_UID)}</Typography>
                         <Typography variant="body1"><b>displayname:</b> {users[i].DISPLAYNAME}</Typography>
                         <Typography variant="body1"><b>donateur:</b> {users[i].donateur ? 'true' : 'false'}</Typography>
-                            <Typography variant="body1"><b>ownaccount:</b> {users[i].OWN_ACCOUNT ? 'true' : 'false'}
-                            </Typography>
                             <Typography variant="body1"><b>google displayname:</b> {users[i].GOOGLE_DISPLAYNAME}
                             </Typography>
                             <Typography variant="body1"><b>google email:</b> {users[i].GOOGLE_EMAIL}</Typography>
@@ -182,6 +185,7 @@ const MergeUsers = ({users, done}) => {
                             <Typography variant="body1"><b>twitter photourl:</b> {users[i].TWITTER_PHOTOURL}
                             </Typography>
                             <Typography variant="body1"><b>twitter uid:</b> {users[i].TWITTER_UID}</Typography>
+                        <Typography variant="body1"><b>twitter uid_str:</b> {users[i].TWITTER_UID_STR}</Typography>
                             {users[i].ATTEMPT_FIRST && users[i].ATTEMPT_FIRST.timestamp &&
                                 <Typography variant="body1"><b>eerste
                                     antwoord:</b> {new Date(users[i].ATTEMPT_FIRST.timestamp).toLocaleDateString()}
@@ -204,7 +208,6 @@ const MergeUsers = ({users, done}) => {
             <Typography variant="body1"><b>auth_uids:</b> {JSON.stringify(mergedUser.AUTH_UID)}</Typography>
             <Typography variant="body1"><b>displayname:</b> {mergedUser.DISPLAYNAME}</Typography>
             <Typography variant="body1"><b>donateur:</b> {mergedUser.donateur ? 'true' : 'false'}</Typography>
-            <Typography variant="body1"><b>ownaccount:</b> {mergedUser.OWN_ACCOUNT ? 'true' : 'false'}</Typography>
             <Typography variant="body1"><b>google displayname:</b> {mergedUser.GOOGLE_DISPLAYNAME}</Typography>
             <Typography variant="body1"><b>google email:</b> {mergedUser.GOOGLE_EMAIL}</Typography>
             <Typography variant="body1"><b>google photourl:</b> {mergedUser.GOOGLE_PHOTOURL}</Typography>
@@ -219,6 +222,7 @@ const MergeUsers = ({users, done}) => {
             <Typography variant="body1"><b>twitter handle:</b> {mergedUser.TWITTER_HANDLE}</Typography>
             <Typography variant="body1"><b>twitter photourl:</b> {mergedUser.TWITTER_PHOTOURL}</Typography>
             <Typography variant="body1"><b>twitter uid:</b> {mergedUser.TWITTER_UID}</Typography>
+                <Typography variant="body1"><b>twitter uid_str:</b> {mergedUser.TWITTER_UID_STR}</Typography>
             </CardContent>
             </Card>
             <Button variant="contained" onClick={() => opslaan()}>gereed</Button>

@@ -39,7 +39,8 @@ const Login = ({newUser, loginVoltooid, uitloggen}) => {
                 switch (providerData.providerId) {
                     case "twitter.com":
                         data = {
-                            TWITTER_UID:parseInt(providerData.uid, 10),
+                            TWITTER_UID:String(providerData.uid),
+                            TWITTER_UID_STR:String(providerData.uid),
                             TWITTER_DISPLAYNAME:providerData.displayName,
                             TWITTER_PHOTOURL:providerData.photoURL,
                             TWITTER_HANDLE:twitterHandle,
