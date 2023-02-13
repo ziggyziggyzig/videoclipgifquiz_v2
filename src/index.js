@@ -18,6 +18,7 @@ import {ToonRondeProvider} from "./Contexts/ToonRonde"
 import {HuidigeRondeProvider} from "./Contexts/HuidigeRonde"
 
 import App from "./App/App"
+import {MessagesProvider} from "./Contexts/Messages"
 // const App = lazy(() => import("./App/App"))
 
 moment.locale(`nl`)
@@ -38,7 +39,9 @@ root.render(
             <CurrentUserProvider>
                 <HuidigeRondeProvider>
                     <ToonRondeProvider>
+                        <MessagesProvider>
                             <App/>
+                        </MessagesProvider>
                     </ToonRondeProvider>
                 </HuidigeRondeProvider>
             </CurrentUserProvider>

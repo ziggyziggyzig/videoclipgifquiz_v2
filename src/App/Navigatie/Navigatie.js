@@ -6,17 +6,29 @@ import {CurrentUserContext} from "../../Contexts/CurrentUser"
 import {HuidigeRondeContext} from "../../Contexts/HuidigeRonde"
 import Loading from "../Loading/Loading"
 import {doc, getDoc} from "firebase/firestore"
+import {MessagesContext} from "../../Contexts/Messages"
 
 const Logo = lazy(() => import('./Logo'))
+const Messages = lazy(() => import('./Messages'))
 const Menu = lazy(() => import('./Menu'))
 const UserMenu = lazy(() => import('./UserMenu'))
 
-const Navigatie = ({inloggen, uitloggen, showMenu, toonMenu, showUserMenu, toonUserMenu}) => {
+const Navigatie = ({
+                       inloggen,
+                       uitloggen,
+                       showMessages,
+                       toonMessages,
+                       showMenu,
+                       toonMenu,
+                       showUserMenu,
+                       toonUserMenu
+                   }) => {
+    const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
+    const [{currentUserData}] = useContext(CurrentUserContext)
+    const [{messages}]=useContext(MessagesContext)
     const [headerUrl, setHeaderUrl] = useState(null)
     const [showAlert, setShowAlert] = useState(false)
-    const [{currentUserData}] = useContext(CurrentUserContext)
     const [imageLoaded, setImageLoaded] = useState(false)
-    const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
     const [huidigeRondeStart, setHuidigeRondeStart] = useState(null)
     const [huidigeRondeEind, setHuidigeRondeEind] = useState(null)
 
@@ -80,6 +92,14 @@ const Navigatie = ({inloggen, uitloggen, showMenu, toonMenu, showUserMenu, toonU
                 <Logo url={headerUrl}/>
             </Suspense>
         </div>
+        {currentUserData && currentUserData.USER_ID &&
+            <div className="navigatie_rechts" onClick={() => toonMessages()}>
+                <div className="navigatie_messages_icon_container">
+                    {messages && messages.unread && <i className="fa-solid fa-circle-exclamation navigatie_messages_icon_unread"/>}
+                    <i className="fa-regular fa-envelope navigatie_messages_icon"/>
+                </div>
+            </div>
+        }
         <div className="navigatie_rechts" onClick={() => toonUserMenu()}>
             {currentUserData ? <div className="navigatie_userimage_container">
                     {currentUserData.PROVIDER === "twitter.com" &&
@@ -101,8 +121,8 @@ const Navigatie = ({inloggen, uitloggen, showMenu, toonMenu, showUserMenu, toonU
             <i className="fa-solid fa-bars"/>
         </div>
         <Suspense fallback={<Loading/>}>
-            <UserMenu showUserMenu={showUserMenu} inloggen={(p) => login(p)} uitloggen={() => uitloggen()}
-            />
+            {currentUserData && currentUserData.USER_ID && currentUserData.USER_ID==='Qt1Ra4sGHrTHvgsJg9e7' && <Messages showMessages={showMessages}/>}
+            <UserMenu showUserMenu={showUserMenu} inloggen={(p) => login(p)} uitloggen={() => uitloggen()}/>
             <Menu showMenu={showMenu}/>
         </Suspense>
     </div>

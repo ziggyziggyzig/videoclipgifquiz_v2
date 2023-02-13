@@ -105,6 +105,29 @@ a:active {
     font-size: 2em;
 }
 
+.navigatie_messages_icon {
+    /*width: 1.5em;*/
+    /*height: 1.5em;*/
+    /*border-radius: 1em;*/
+    position: relative;
+    z-index: 10;
+}
+
+.navigatie_messages_icon_container {
+    position: relative;
+}
+
+.navigatie_messages_icon_unread {
+    position: absolute;
+    z-index: 11;
+    bottom: 0;
+    right: -0.5em;
+    font-size: 0.5em;
+    color: red;
+    background-image: radial-gradient(circle closest-side at center, rgba(255, 183, 3, 1), rgba(255, 183, 3, 0));
+    border-radius: 0.5em;
+}
+
 .navigatie_userimage {
     width: 1.5em;
     height: 1.5em;
@@ -126,7 +149,7 @@ a:active {
     color: var(--yellow);
     border-radius: 0.7em;
     padding: 0.2em;
-    background-image: radial-gradient(circle closest-side at center,rgba(2,48,71,1),rgba(2,48,71,0));
+    background-image: radial-gradient(circle closest-side at center, rgba(2, 48, 71, 1), rgba(2, 48, 71, 0));
     /*text-shadow: -1px 0 var(--yellow), 0 1px var(--yellow), 1px 0 var(--yellow), 0 -1px var(--yellow);*/
 }
 
@@ -346,7 +369,7 @@ td.overTableRight {
     animation: fadeIn linear 1s;
 }
 
-.navigatie_usermenu, .navigatie_menu {
+.navigatie_messages, .navigatie_usermenu, .navigatie_menu {
     background-color: var(--darkblue);
     border-collapse: collapse;
     border: 2px var(--yellow) solid;
@@ -357,8 +380,13 @@ td.overTableRight {
     display: block;
     animation: fadeIn linear 0.2s;
     top: 4em;
+    box-shadow: 2px 2px 5px var(--yellow);
 }
 
+.navigatie_messages {
+    right: 6em;
+    max-width: 200px;
+}
 
 .navigatie_usermenu {
     right: 4em;
@@ -372,6 +400,31 @@ td.overTableRight {
     display: none;
 }
 
+.navigatie_messages_message_toon_alle_berichten {
+    font-size: 0.8em;
+    text-align: left;
+    color: var(--lightblue)
+}
+
+.navigatie_messages_message_timestamp {
+    font-size: 0.8em;
+    text-align: left;
+    color: var(--orange)
+}
+
+.navigatie_messages_message_text {
+    font-size: 1em;
+    text-align: left;
+}
+
+.navigatie_messages_message_buttons {
+    font-size: 1em;
+    right: 0;
+    float: right;
+    color: var(--lightblue);
+    margin-left: 5px;
+}
+
 .App {
     width: 100%;
     margin: 0;
@@ -382,6 +435,6 @@ td.overTableRight {
     border-collapse: collapse;
 }
 
-h1,h2,h3 {
+h1, h2, h3 {
     border-bottom: 1px solid var(--orange);
 }

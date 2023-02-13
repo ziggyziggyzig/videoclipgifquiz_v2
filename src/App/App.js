@@ -14,6 +14,7 @@ import {CurrentUserContext} from "../Contexts/CurrentUser"
 
 import loadable from '@loadable/component'
 import {HuidigeRondeContext} from "../Contexts/HuidigeRonde"
+import {MessagesContext} from "../Contexts/Messages"
 
 const Navigatie = loadable(() => import('./Navigatie/Navigatie'))
 const Speler = loadable(() => import('./Speler/Speler'))
@@ -30,25 +31,36 @@ if (!window.location.href.includes("localhost") && !window.location.href.include
 }
 
 const App = () => {
-    const [, dispatchCurrentUser] = useContext(CurrentUserContext)
+    const [{currentUserData}, dispatchCurrentUserData] = useContext(CurrentUserContext)
     const [, dispatchHuidigeRonde] = useContext(HuidigeRondeContext)
+    const [, dispatchMessages] = useContext(MessagesContext)
+    const [showMessages, setShowMessages] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
     const [showUserMenu, setShowUserMenu] = useState(false)
     const [onthoudPagina, setOnthoudPagina] = useState(false)
     const [toonLoginPagina, setToonLoginPagina] = useState(true)
     const [newUser, setNewUser] = useState(null)
 
+    const toonMessages = () => {
+        setShowUserMenu(false)
+        setShowMenu(false)
+        return setShowMessages(!showMessages)
+    }
+
     const toonMenu = () => {
+        setShowMessages(false)
         setShowUserMenu(false)
         return setShowMenu(!showMenu)
     }
 
     const toonUserMenu = () => {
+        setShowMessages(false)
         setShowMenu(false)
         return setShowUserMenu(!showUserMenu)
     }
 
     const verbergAlleMenus = () => {
+        setShowMessages(false)
         setShowMenu(false)
         return setShowUserMenu(false)
     }
@@ -63,7 +75,7 @@ const App = () => {
                 let user = result.user
                 const db_user = await getDocs(query(collection(db, 'users'), where('AUTH_UID', 'array-contains', user.uid)))
                 if (db_user.size > 0) {
-                    dispatchCurrentUser({
+                    dispatchCurrentUserData({
                         type:"SET",
                         currentUserData:{
                             PROVIDER:user.providerData[0].providerId,
@@ -78,7 +90,7 @@ const App = () => {
 
     const uitloggen = async () => {
         await signOut(auth)
-        return dispatchCurrentUser({type:"SET", currentUserData:null})
+        return dispatchCurrentUserData({type:"SET", currentUserData:null})
     }
 
     const loginVoltooid = () => {
@@ -93,7 +105,7 @@ const App = () => {
             if (user) {
                 const db_user = await getDocs(query(collection(db, 'users'), where('AUTH_UID', 'array-contains', user.uid)))
                 if (db_user.size > 0) {
-                    dispatchCurrentUser({
+                    dispatchCurrentUserData({
                         type:"SET",
                         currentUserData:{
                             PROVIDER:user.providerData[0].providerId,
@@ -108,11 +120,11 @@ const App = () => {
                 }
             } else {
                 setToonLoginPagina(false)
-                dispatchCurrentUser({type:"SET", currentUserData:null})
+                dispatchCurrentUserData({type:"SET", currentUserData:null})
             }
             return true
         })
-    }, [dispatchCurrentUser])
+    }, [dispatchCurrentUserData])
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, "tellers", "huidige_ronde"), async (d) => {
@@ -123,6 +135,29 @@ const App = () => {
             unsubscribe()
         }
     }, [dispatchHuidigeRonde])
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, "messages"), async (s) => {
+            if (currentUserData && currentUserData.USER_ID) {
+                let toContext = []
+                let unread=false
+                let unpushed=false
+                for (let d of s.docs) {
+                    if (d.data().FOR_USER_ID === currentUserData.USER_ID) {
+                        toContext.push({ID:d.id, ...d.data()})
+                        if (d.data().READ===false) unread=true
+                        if (d.data().PUSHED===false) unpushed=true
+                    }
+                }
+                toContext.sort((a,b)=>b.TIMESTAMP-a.TIMESTAMP)
+                if (toContext.length > 0) dispatchMessages({type:'SET', messages:{unread:unread,unpushed:unpushed,list:toContext}})
+            }
+        })
+
+        return () => {
+            unsubscribe()
+        }
+    }, [currentUserData, dispatchMessages])
 
     useEffect(() => {
         if (!window.location.href.includes("localhost")
@@ -136,6 +171,7 @@ const App = () => {
     return <div className="App">
         <BrowserRouter>
             <Navigatie inloggen={(p) => inloggen(p)} uitloggen={() => uitloggen()}
+                       showMessages={showMessages} toonMessages={() => toonMessages()}
                        showMenu={showMenu} toonMenu={() => toonMenu()}
                        showUserMenu={showUserMenu} toonUserMenu={() => toonUserMenu()}
             />
