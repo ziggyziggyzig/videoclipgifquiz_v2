@@ -91,9 +91,9 @@ const Users = () => {
                                     }
                                 </TableCell>
                                 <TableCell>{i.USER_ID}</TableCell>
-                                <TableCell>{i.TWITTER_HANDLE ? <>@{i.TWITTER_HANDLE}</> : ''}</TableCell>
-                                <TableCell>{i.GOOGLE_EMAIL || ''}</TableCell>
-                                <TableCell>{i.MASTODON_ACCOUNT || ''}</TableCell>
+                                <TableCell sx={{backgroundColor:i.TWITTER_UID_STR && alleUsers.filter(o => o.TWITTER_UID_STR === i.TWITTER_UID_STR).length > 1 ? 'lightblue' : 'white'}}>{i.TWITTER_HANDLE ? <>@{i.TWITTER_HANDLE}</> : ''}</TableCell>
+                                <TableCell sx={{backgroundColor:i.GOOGLE_UID && alleUsers.filter(o => o.GOOGLE_UID === i.GOOGLE_UID).length > 1 ? 'lightblue' : 'white'}}>{i.GOOGLE_EMAIL || ''}</TableCell>
+                                <TableCell sx={{backgroundColor:i.MASTODON_ACCOUNT && alleUsers.filter(o => o.MASTODON_ACCOUNT === i.MASTODON_ACCOUNT).length > 1 ? 'lightblue' : 'white'}}>{i.MASTODON_ACCOUNT || ''}</TableCell>
                                 <TableCell>{i.donateur ? 'true' : 'false'}</TableCell>
                                 <TableCell>{(i.ATTEMPT_FIRST && i.ATTEMPT_FIRST.timestamp) ? new Date(i.ATTEMPT_FIRST.timestamp).toLocaleDateString() : ''}</TableCell>
                                 <TableCell>{i.CORRECT_COUNT || 0}</TableCell>
@@ -132,7 +132,7 @@ const MergeUsers = ({users, done}) => {
             TWITTER_HANDLE:users[order[0]].TWITTER_HANDLE || users[order[1]].TWITTER_HANDLE || null,
             TWITTER_PHOTOURL:users[order[0]].TWITTER_PHOTOURL || users[order[1]].TWITTER_PHOTOURL || null,
             TWITTER_UID:users[order[0]].TWITTER_UID || users[order[1]].TWITTER_UID || null,
-            TWITTER_UID_STR:users[order[0]].TWITTER_UID_STR || users[order[1]].TWITTER_UID_STR || null,
+            TWITTER_UID_STR:users[order[0]].TWITTER_UID_STR || users[order[1]].TWITTER_UID_STR || null
 
         })
     }, [users, order])
@@ -145,9 +145,9 @@ const MergeUsers = ({users, done}) => {
     }
 
     const opslaan = async () => {
-        let z=await getDocs(query(collection(db,'inzendingen'),where('USER_ID','==',users[order[1]].USER_ID)))
+        let z = await getDocs(query(collection(db, 'inzendingen'), where('USER_ID', '==', users[order[1]].USER_ID)))
         for (let f of z.docs) {
-            await updateDoc(doc(db,'inzendingen',f.id),{USER_ID:mergedUser.USER_ID})
+            await updateDoc(doc(db, 'inzendingen', f.id), {USER_ID:mergedUser.USER_ID})
         }
         await setDoc(doc(db, 'users_backup', `${users[order[0]].USER_ID}-${new Date().getTime()}`), users[order[0]])
         await setDoc(doc(db, 'users_backup', `${users[order[1]].USER_ID}-${new Date().getTime()}`), users[order[1]])
@@ -165,34 +165,34 @@ const MergeUsers = ({users, done}) => {
                         <Typography variant="body1"><b>auth_uids:</b> {JSON.stringify(users[i].AUTH_UID)}</Typography>
                         <Typography variant="body1"><b>displayname:</b> {users[i].DISPLAYNAME}</Typography>
                         <Typography variant="body1"><b>donateur:</b> {users[i].donateur ? 'true' : 'false'}</Typography>
-                            <Typography variant="body1"><b>google displayname:</b> {users[i].GOOGLE_DISPLAYNAME}
-                            </Typography>
-                            <Typography variant="body1"><b>google email:</b> {users[i].GOOGLE_EMAIL}</Typography>
-                            <Typography variant="body1"><b>google photourl:</b> {users[i].GOOGLE_PHOTOURL}</Typography>
-                            <Typography variant="body1"><b>google_uid:</b> {users[i].GOOGLE_UID}</Typography>
-                            <Typography variant="body1"><b>mastodon account:</b> {users[i].MASTODON_ACCOUNT}
-                            </Typography>
-                            <Typography variant="body1"><b>mastodon displayname:</b> {users[i].MASTODON_DISPLAYNAME}
-                            </Typography>
-                            <Typography variant="body1"><b>mastodon
-                                limited:</b> {users[i].MASTODON_LIMITED ? 'true' : 'false'}</Typography>
-                            <Typography variant="body1"><b>mastodon photourl:</b> {users[i].MASTODON_PHOTOURL}
-                            </Typography>
-                            <Typography variant="body1"><b>mastodon url:</b> {users[i].MASTODON_URL}</Typography>
-                            <Typography variant="body1"><b>twitter displayname:</b> {users[i].TWITTER_DISPLAYNAME}
-                            </Typography>
-                            <Typography variant="body1"><b>twitter handle:</b> {users[i].TWITTER_HANDLE}</Typography>
-                            <Typography variant="body1"><b>twitter photourl:</b> {users[i].TWITTER_PHOTOURL}
-                            </Typography>
-                            <Typography variant="body1"><b>twitter uid:</b> {users[i].TWITTER_UID}</Typography>
+                        <Typography variant="body1"><b>google displayname:</b> {users[i].GOOGLE_DISPLAYNAME}
+                        </Typography>
+                        <Typography variant="body1"><b>google email:</b> {users[i].GOOGLE_EMAIL}</Typography>
+                        <Typography variant="body1"><b>google photourl:</b> {users[i].GOOGLE_PHOTOURL}</Typography>
+                        <Typography variant="body1"><b>google_uid:</b> {users[i].GOOGLE_UID}</Typography>
+                        <Typography variant="body1"><b>mastodon account:</b> {users[i].MASTODON_ACCOUNT}
+                        </Typography>
+                        <Typography variant="body1"><b>mastodon displayname:</b> {users[i].MASTODON_DISPLAYNAME}
+                        </Typography>
+                        <Typography variant="body1"><b>mastodon
+                            limited:</b> {users[i].MASTODON_LIMITED ? 'true' : 'false'}</Typography>
+                        <Typography variant="body1"><b>mastodon photourl:</b> {users[i].MASTODON_PHOTOURL}
+                        </Typography>
+                        <Typography variant="body1"><b>mastodon url:</b> {users[i].MASTODON_URL}</Typography>
+                        <Typography variant="body1"><b>twitter displayname:</b> {users[i].TWITTER_DISPLAYNAME}
+                        </Typography>
+                        <Typography variant="body1"><b>twitter handle:</b> {users[i].TWITTER_HANDLE}</Typography>
+                        <Typography variant="body1"><b>twitter photourl:</b> {users[i].TWITTER_PHOTOURL}
+                        </Typography>
+                        <Typography variant="body1"><b>twitter uid:</b> {users[i].TWITTER_UID}</Typography>
                         <Typography variant="body1"><b>twitter uid_str:</b> {users[i].TWITTER_UID_STR}</Typography>
-                            {users[i].ATTEMPT_FIRST && users[i].ATTEMPT_FIRST.timestamp &&
-                                <Typography variant="body1"><b>eerste
-                                    antwoord:</b> {new Date(users[i].ATTEMPT_FIRST.timestamp).toLocaleDateString()}
-                                </Typography>
-                            }
-                            <Typography variant="body1"><b>aantal antwoorden:</b> {users[i].CORRECT_COUNT || 0}
+                        {users[i].ATTEMPT_FIRST && users[i].ATTEMPT_FIRST.timestamp &&
+                            <Typography variant="body1"><b>eerste
+                                antwoord:</b> {new Date(users[i].ATTEMPT_FIRST.timestamp).toLocaleDateString()}
                             </Typography>
+                        }
+                        <Typography variant="body1"><b>aantal antwoorden:</b> {users[i].CORRECT_COUNT || 0}
+                        </Typography>
 
                     </CardContent>
                 </Card>
@@ -200,35 +200,35 @@ const MergeUsers = ({users, done}) => {
                     <Typography variant="h4" sx={{textAlign:'center'}}><i
                         className="fa-solid fa-plus"/></Typography>}
             </Fragment>
-            )}
-            <Typography variant="h4" sx={{textAlign:'center'}}><i className="fa-solid fa-equals"/></Typography>
-            <Card raised={true} sx={{margin:'1em', backgroundColor:'yellow'}}>
+        )}
+        <Typography variant="h4" sx={{textAlign:'center'}}><i className="fa-solid fa-equals"/></Typography>
+        <Card raised={true} sx={{margin:'1em', backgroundColor:'yellow'}}>
             <CardContent>
-            <Typography variant="h5">{mergedUser.USER_ID}</Typography>
-            <Typography variant="body1"><b>auth_uids:</b> {JSON.stringify(mergedUser.AUTH_UID)}</Typography>
-            <Typography variant="body1"><b>displayname:</b> {mergedUser.DISPLAYNAME}</Typography>
-            <Typography variant="body1"><b>donateur:</b> {mergedUser.donateur ? 'true' : 'false'}</Typography>
-            <Typography variant="body1"><b>google displayname:</b> {mergedUser.GOOGLE_DISPLAYNAME}</Typography>
-            <Typography variant="body1"><b>google email:</b> {mergedUser.GOOGLE_EMAIL}</Typography>
-            <Typography variant="body1"><b>google photourl:</b> {mergedUser.GOOGLE_PHOTOURL}</Typography>
-            <Typography variant="body1"><b>google_uid:</b> {mergedUser.GOOGLE_UID}</Typography>
-            <Typography variant="body1"><b>mastodon account:</b> {mergedUser.MASTODON_ACCOUNT}</Typography>
-            <Typography variant="body1"><b>mastodon displayname:</b> {mergedUser.MASTODON_DISPLAYNAME}</Typography>
-            <Typography variant="body1"><b>mastodon limited:</b> {mergedUser.MASTODON_LIMITED ? 'true' : 'false'}
-            </Typography>
-            <Typography variant="body1"><b>mastodon photourl:</b> {mergedUser.MASTODON_PHOTOURL}</Typography>
-            <Typography variant="body1"><b>mastodon url:</b> {mergedUser.MASTODON_URL}</Typography>
-            <Typography variant="body1"><b>twitter displayname:</b> {mergedUser.TWITTER_DISPLAYNAME}</Typography>
-            <Typography variant="body1"><b>twitter handle:</b> {mergedUser.TWITTER_HANDLE}</Typography>
-            <Typography variant="body1"><b>twitter photourl:</b> {mergedUser.TWITTER_PHOTOURL}</Typography>
-            <Typography variant="body1"><b>twitter uid:</b> {mergedUser.TWITTER_UID}</Typography>
+                <Typography variant="h5">{mergedUser.USER_ID}</Typography>
+                <Typography variant="body1"><b>auth_uids:</b> {JSON.stringify(mergedUser.AUTH_UID)}</Typography>
+                <Typography variant="body1"><b>displayname:</b> {mergedUser.DISPLAYNAME}</Typography>
+                <Typography variant="body1"><b>donateur:</b> {mergedUser.donateur ? 'true' : 'false'}</Typography>
+                <Typography variant="body1"><b>google displayname:</b> {mergedUser.GOOGLE_DISPLAYNAME}</Typography>
+                <Typography variant="body1"><b>google email:</b> {mergedUser.GOOGLE_EMAIL}</Typography>
+                <Typography variant="body1"><b>google photourl:</b> {mergedUser.GOOGLE_PHOTOURL}</Typography>
+                <Typography variant="body1"><b>google_uid:</b> {mergedUser.GOOGLE_UID}</Typography>
+                <Typography variant="body1"><b>mastodon account:</b> {mergedUser.MASTODON_ACCOUNT}</Typography>
+                <Typography variant="body1"><b>mastodon displayname:</b> {mergedUser.MASTODON_DISPLAYNAME}</Typography>
+                <Typography variant="body1"><b>mastodon limited:</b> {mergedUser.MASTODON_LIMITED ? 'true' : 'false'}
+                </Typography>
+                <Typography variant="body1"><b>mastodon photourl:</b> {mergedUser.MASTODON_PHOTOURL}</Typography>
+                <Typography variant="body1"><b>mastodon url:</b> {mergedUser.MASTODON_URL}</Typography>
+                <Typography variant="body1"><b>twitter displayname:</b> {mergedUser.TWITTER_DISPLAYNAME}</Typography>
+                <Typography variant="body1"><b>twitter handle:</b> {mergedUser.TWITTER_HANDLE}</Typography>
+                <Typography variant="body1"><b>twitter photourl:</b> {mergedUser.TWITTER_PHOTOURL}</Typography>
+                <Typography variant="body1"><b>twitter uid:</b> {mergedUser.TWITTER_UID}</Typography>
                 <Typography variant="body1"><b>twitter uid_str:</b> {mergedUser.TWITTER_UID_STR}</Typography>
             </CardContent>
-            </Card>
-            <Button variant="contained" onClick={() => opslaan()}>gereed</Button>
-            <Button variant="contained" onClick={() => wissel()}><a id="knoppen"/> wissel</Button>
+        </Card>
+        <Button variant="contained" onClick={() => opslaan()}>gereed</Button>
+        <Button variant="contained" onClick={() => wissel()}><a id="knoppen"/> wissel</Button>
 
-            </>
-        }
+    </>
+}
 
-        export default Users
+export default Users
