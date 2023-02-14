@@ -1,7 +1,6 @@
 import './Login.css'
 import {useEffect, useState} from "react"
-import {adminFunctions, db, zoekTwitterNaam} from "../../Firebase/Firebase"
-import {doc, getDoc} from "firebase/firestore"
+import {adminFunctions, zoekTwitterNaam} from "../../Firebase/Firebase"
 import {CurrentUserContext} from "../../Contexts/CurrentUser"
 
 const Login = ({newUser, loginVoltooid, uitloggen}) => {
@@ -57,29 +56,6 @@ const Login = ({newUser, loginVoltooid, uitloggen}) => {
                         }
                         break
                     default:
-                }
-            }
-        }
-        if (twitterHandle) {
-            let speler = await getDoc(doc(db, 'spelers', twitterHandle))
-            if (speler.data()) {
-                let speler_data = speler.data()
-                data = {
-                    ATTEMPT_FIRST:speler_data.ATTEMPT_FIRST || {},
-                    BONUS_COUNT:speler_data.BONUS_COUNT || 0,
-                    BONUS_LIST:speler_data.BONUS_LIST || [],
-                    CORRECT_COUNT:speler_data.CORRECT_COUNT || 0,
-                    CORRECT_FIRST:speler_data.CORRECT_FIRST || {},
-                    CORRECT_LAST:speler_data.CORRECT_LAST || {},
-                    FAST_FIVE:speler_data.FAST_FIVE || [],
-                    MEDIUM_COUNT:speler_data.MEDIUM_COUNT || [],
-                    SERIES_LIST:speler_data.SERIES_LIST || [],
-                    SLOW_FIVE:speler_data.SLOW_FIVE || [],
-                    WIN_COUNT:speler_data.WIN_COUNT || 0,
-                    WIN_LIST:speler_data.WIN_LIST || [],
-                    YEARS_LIST:speler_data.YEARS_LIST || [],
-                    TAART_COUNT:speler_data.taart || 0,
-                    ...data
                 }
             }
         }

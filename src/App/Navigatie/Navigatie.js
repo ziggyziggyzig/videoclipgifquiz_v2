@@ -25,7 +25,7 @@ const Navigatie = ({
                    }) => {
     const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
     const [{currentUserData}] = useContext(CurrentUserContext)
-    const [{messages}]=useContext(MessagesContext)
+    const [{messages}] = useContext(MessagesContext)
     const [headerUrl, setHeaderUrl] = useState(null)
     const [showAlert, setShowAlert] = useState(false)
     const [imageLoaded, setImageLoaded] = useState(false)
@@ -95,7 +95,8 @@ const Navigatie = ({
         {currentUserData && currentUserData.USER_ID &&
             <div className="navigatie_rechts" onClick={() => toonMessages()}>
                 <div className="navigatie_messages_icon_container">
-                    {messages && messages.unread && <i className="fa-solid fa-circle-exclamation navigatie_messages_icon_unread"/>}
+                    {messages && messages.unread &&
+                        <i className="fa-solid fa-circle-exclamation navigatie_messages_icon_unread"/>}
                     <i className="fa-regular fa-envelope navigatie_messages_icon"/>
                 </div>
             </div>
@@ -121,7 +122,8 @@ const Navigatie = ({
             <i className="fa-solid fa-bars"/>
         </div>
         <Suspense fallback={<Loading/>}>
-            {currentUserData && currentUserData.USER_ID && currentUserData.USER_ID==='Qt1Ra4sGHrTHvgsJg9e7' && <Messages showMessages={showMessages}/>}
+            {currentUserData && currentUserData.USER_ID && currentUserData.USER_ID === 'Qt1Ra4sGHrTHvgsJg9e7' &&
+                <Messages showMessages={showMessages} unread={messages && messages.unread} USER_ID={currentUserData.USER_ID}/>}
             <UserMenu showUserMenu={showUserMenu} inloggen={(p) => login(p)} uitloggen={() => uitloggen()}/>
             <Menu showMenu={showMenu}/>
         </Suspense>

@@ -35,7 +35,8 @@ const Voet = ({clipData,oudeRonde}) => {
             }
             {!oudeRonde &&
                 <>
-                    <p className="font_serif_normal"><span className="rood">Waarschijnlijk werkt het antwoordapparaat via Twitter vanaf 13 februari niet meer.</span> Verstuur je antwoord via Mastodon
+                    <p className="font_serif_normal"><span className="rood">Waarschijnlijk werkt het antwoordapparaat via Twitter binnenkort niet meer.</span><br/>
+                        Verstuur je antwoord via Mastodon
                         {currentUserData ?
                             <>, of via onderstaand invulding.<br/>Je krijgt bevestiging onder het invulding.</> :
                             <> of klik rechtsboven op het poppetje om in te loggen. Je kan dan via de website je

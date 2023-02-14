@@ -5,6 +5,7 @@ import {getStorage} from "firebase/storage"
 import {getAuth, GoogleAuthProvider, TwitterAuthProvider} from "firebase/auth"
 import {getFunctions, httpsCallable} from "firebase/functions"
 import {getAnalytics} from "firebase/analytics"
+import {getMessaging} from 'firebase/messaging'
 
 const app = initializeApp(require(`./FirebaseConfig.json`))
 
@@ -16,6 +17,8 @@ const appCheck = initializeAppCheck(app, {
 const db = getFirestore(app)
 const storage = getStorage(app)
 const analytics = getAnalytics(app)
+
+const messaging=getMessaging(app)
 
 const auth = getAuth(app)
 auth.useDeviceLanguage()
@@ -34,6 +37,7 @@ export {
     db,
     storage,
     analytics,
+    messaging,
     auth,
     googleProvider,
     twitterProvider,

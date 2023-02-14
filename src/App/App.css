@@ -400,7 +400,7 @@ td.overTableRight {
     display: none;
 }
 
-.navigatie_messages_message_toon_alle_berichten {
+.navigatie_messages_message_toon_alle_berichten,.navigatie_messages_message_markeer_alles_gelezen {
     font-size: 0.8em;
     text-align: left;
     color: var(--lightblue)
@@ -413,7 +413,7 @@ td.overTableRight {
 }
 
 .navigatie_messages_message_text {
-    font-size: 1em;
+    font-size: 0.8em;
     text-align: left;
 }
 
