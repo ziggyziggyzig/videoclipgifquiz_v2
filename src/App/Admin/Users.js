@@ -1,16 +1,5 @@
-import {
-    Box,
-    Button, Card, CardContent,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow, Typography
-} from "@mui/material"
-
 import {Fragment, useEffect, useState} from "react"
+
 import {collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, where} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 
@@ -40,7 +29,6 @@ const Users = () => {
         if (i === 0) currentState.shift()
         else if (i === 1) currentState.pop()
         else if (i === -1 && currentState.length < 2) currentState.push(userid)
-        console.log(currentState)
         setToMerge(currentState)
         setToMergeLength(currentState.length)
     }
@@ -56,55 +44,52 @@ const Users = () => {
     doMerge ? <MergeUsers
             users={[alleUsers.find(o => o.USER_ID === toMerge[0]), alleUsers.find(o => o.USER_ID === toMerge[1])]}
             done={() => mergeDone()}/> :
-        <Box sx={{width:'100%'}}>
+        <>
             <hr/>
-            <Button variant="outlined" disabled={toMergeLength !== 2}
-                    onClick={() => setDoMerge(true)}>samenvoegen</Button>
-            <TableContainer component={Paper} sx={{marginTop:'1em', width:'100%'}}>
-                <Table sx={{width:'100%'}} size="small" padding="none" stickyHeader={true}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell>id</TableCell>
-                            <TableCell>twitter</TableCell>
-                            <TableCell>google</TableCell>
-                            <TableCell>mastodon</TableCell>
-                            <TableCell>donateur</TableCell>
-                            <TableCell>eerste</TableCell>
-                            <TableCell>aantal</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {alleUsers.map(i =>
-                            <TableRow key={i.USER_ID}
-                                      sx={{'&:last-child td, &:last-child th':{border:0}}}
-                                      hover={true}
-                            >
-                                <TableCell>
-                                    {(toMergeLength >= 2 && !toMerge.includes(i.USER_ID)) ?
-                                        <input type="checkbox" disabled checked={toMerge.includes(i.USER_ID)}/>
-                                        :
-                                        <input type="checkbox"
-                                               onChange={() => klikCheckBox(i.USER_ID)}
-                                               checked={toMerge.includes(i.USER_ID)}
-                                        />
-                                    }
-                                </TableCell>
-                                <TableCell>{i.USER_ID}</TableCell>
-                                <TableCell sx={{backgroundColor:i.TWITTER_UID_STR && alleUsers.filter(o => o.TWITTER_UID_STR === i.TWITTER_UID_STR).length > 1 ? 'lightblue' : 'white'}}>{i.TWITTER_HANDLE ? <>@{i.TWITTER_HANDLE}</> : ''}</TableCell>
-                                <TableCell sx={{backgroundColor:i.GOOGLE_UID && alleUsers.filter(o => o.GOOGLE_UID === i.GOOGLE_UID).length > 1 ? 'lightblue' : 'white'}}>{i.GOOGLE_EMAIL || ''}</TableCell>
-                                <TableCell sx={{backgroundColor:i.MASTODON_ACCOUNT && alleUsers.filter(o => o.MASTODON_ACCOUNT === i.MASTODON_ACCOUNT).length > 1 ? 'lightblue' : 'white'}}>{i.MASTODON_ACCOUNT || ''}</TableCell>
-                                <TableCell>{i.donateur ? 'true' : 'false'}</TableCell>
-                                <TableCell>{(i.ATTEMPT_FIRST && i.ATTEMPT_FIRST.timestamp) ? new Date(i.ATTEMPT_FIRST.timestamp).toLocaleDateString() : ''}</TableCell>
-                                <TableCell>{i.CORRECT_COUNT || 0}</TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Box>
-
-
+            <input type="button" disabled={toMergeLength !== 2}
+                   onClick={() => setDoMerge(true)} value="samenvoegen"/><br/>
+            <table className='admin_tabel font_sans_normal'>
+                <thead>
+                <tr>
+                    <td/>
+                    <td>id</td>
+                    <td>twitter</td>
+                    <td>google</td>
+                    <td>mastodon</td>
+                    <td>donateur</td>
+                    <td>eerste</td>
+                    <td>aantal</td>
+                </tr>
+                </thead>
+                <tbody>
+                {alleUsers.map(i =>
+                    <tr key={i.USER_ID}
+                    >
+                        <td>
+                            {(toMergeLength >= 2 && !toMerge.includes(i.USER_ID)) ?
+                                <input type="checkbox" disabled checked={toMerge.includes(i.USER_ID)}/>
+                                :
+                                <input type="checkbox"
+                                       onChange={() => klikCheckBox(i.USER_ID)}
+                                       checked={toMerge.includes(i.USER_ID)}
+                                />
+                            }
+                        </td>
+                        <td>{i.USER_ID}</td>
+                        <td><>{i.TWITTER_UID_STR && alleUsers.filter(o => o.TWITTER_UID_STR === i.TWITTER_UID_STR).length > 1 &&
+                            <i className="fa-solid fa-triangle-exclamation rood"/> }{i.TWITTER_HANDLE}</></td>
+                        <td><>{i.GOOGLE_UID && alleUsers.filter(o => o.GOOGLE_UID === i.GOOGLE_UID).length > 1 &&
+                            <i className="fa-solid fa-triangle-exclamation rood"/> }{i.GOOGLE_EMAIL || ''}</></td>
+                        <td><>{i.MASTODON_ACCOUNT && alleUsers.filter(o => o.MASTODON_ACCOUNT === i.MASTODON_ACCOUNT).length > 1 &&
+                            <i className="fa-solid fa-triangle-exclamation rood"/> }{i.MASTODON_ACCOUNT || ''}</></td>
+                        <td>{i.donateur ? 'true' : 'false'}</td>
+                        <td>{(i.ATTEMPT_FIRST && i.ATTEMPT_FIRST.timestamp) ? new Date(i.ATTEMPT_FIRST.timestamp).toLocaleDateString() : ''}</td>
+                        <td>{i.CORRECT_COUNT || 0}</td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
+        </>
 }
 
 const MergeUsers = ({users, done}) => {
@@ -159,75 +144,70 @@ const MergeUsers = ({users, done}) => {
     return <>
         {order.map((i, n) =>
             <Fragment key={i}>
-                <Card raised={true} sx={{margin:'1em', backgroundColor:n === 0 ? 'green' : 'red'}}>
-                    <CardContent>
-                        <Typography variant="h5">{users[i].USER_ID}</Typography>
-                        <Typography variant="body1"><b>auth_uids:</b> {JSON.stringify(users[i].AUTH_UID)}</Typography>
-                        <Typography variant="body1"><b>displayname:</b> {users[i].DISPLAYNAME}</Typography>
-                        <Typography variant="body1"><b>donateur:</b> {users[i].donateur ? 'true' : 'false'}</Typography>
-                        <Typography variant="body1"><b>google displayname:</b> {users[i].GOOGLE_DISPLAYNAME}
-                        </Typography>
-                        <Typography variant="body1"><b>google email:</b> {users[i].GOOGLE_EMAIL}</Typography>
-                        <Typography variant="body1"><b>google photourl:</b> {users[i].GOOGLE_PHOTOURL}</Typography>
-                        <Typography variant="body1"><b>google_uid:</b> {users[i].GOOGLE_UID}</Typography>
-                        <Typography variant="body1"><b>mastodon account:</b> {users[i].MASTODON_ACCOUNT}
-                        </Typography>
-                        <Typography variant="body1"><b>mastodon displayname:</b> {users[i].MASTODON_DISPLAYNAME}
-                        </Typography>
-                        <Typography variant="body1"><b>mastodon
-                            limited:</b> {users[i].MASTODON_LIMITED ? 'true' : 'false'}</Typography>
-                        <Typography variant="body1"><b>mastodon photourl:</b> {users[i].MASTODON_PHOTOURL}
-                        </Typography>
-                        <Typography variant="body1"><b>mastodon url:</b> {users[i].MASTODON_URL}</Typography>
-                        <Typography variant="body1"><b>twitter displayname:</b> {users[i].TWITTER_DISPLAYNAME}
-                        </Typography>
-                        <Typography variant="body1"><b>twitter handle:</b> {users[i].TWITTER_HANDLE}</Typography>
-                        <Typography variant="body1"><b>twitter photourl:</b> {users[i].TWITTER_PHOTOURL}
-                        </Typography>
-                        <Typography variant="body1"><b>twitter uid:</b> {users[i].TWITTER_UID}</Typography>
-                        <Typography variant="body1"><b>twitter uid_str:</b> {users[i].TWITTER_UID_STR}</Typography>
-                        {users[i].ATTEMPT_FIRST && users[i].ATTEMPT_FIRST.timestamp &&
-                            <Typography variant="body1"><b>eerste
+                <div style={{backgroundColor:n === 0 ? 'green' : 'red'}} className='font_sans_normal'>
+                    <h5>{users[i].USER_ID}</h5>
+                    <span><b>auth_uids:</b> {JSON.stringify(users[i].AUTH_UID)}<br/></span>
+                    <span><b>displayname:</b> {users[i].DISPLAYNAME}<br/></span>
+                    <span><b>donateur:</b> {users[i].donateur ? 'true' : 'false'}<br/></span>
+                    <span><b>google displayname:</b> {users[i].GOOGLE_DISPLAYNAME}
+                        <br/></span>
+                    <span><b>google email:</b> {users[i].GOOGLE_EMAIL}<br/></span>
+                    <span><b>google photourl:</b> {users[i].GOOGLE_PHOTOURL}<br/></span>
+                    <span><b>google_uid:</b> {users[i].GOOGLE_UID}<br/></span>
+                    <span><b>mastodon account:</b> {users[i].MASTODON_ACCOUNT}
+                        <br/></span>
+                    <span><b>mastodon displayname:</b> {users[i].MASTODON_DISPLAYNAME}
+                        <br/></span>
+                    <span><b>mastodon
+                            limited:</b> {users[i].MASTODON_LIMITED ? 'true' : 'false'}<br/></span>
+                    <span><b>mastodon photourl:</b> {users[i].MASTODON_PHOTOURL}
+                        <br/></span>
+                    <span><b>mastodon url:</b> {users[i].MASTODON_URL}<br/></span>
+                    <span><b>twitter displayname:</b> {users[i].TWITTER_DISPLAYNAME}
+                        <br/></span>
+                    <span><b>twitter handle:</b> {users[i].TWITTER_HANDLE}<br/></span>
+                    <span><b>twitter photourl:</b> {users[i].TWITTER_PHOTOURL}
+                        <br/></span>
+                    <span><b>twitter uid:</b> {users[i].TWITTER_UID}<br/></span>
+                    <span><b>twitter uid_str:</b> {users[i].TWITTER_UID_STR}<br/></span>
+                    {users[i].ATTEMPT_FIRST && users[i].ATTEMPT_FIRST.timestamp &&
+                        <span><b>eerste
                                 antwoord:</b> {new Date(users[i].ATTEMPT_FIRST.timestamp).toLocaleDateString()}
-                            </Typography>
-                        }
-                        <Typography variant="body1"><b>aantal antwoorden:</b> {users[i].CORRECT_COUNT || 0}
-                        </Typography>
-
-                    </CardContent>
-                </Card>
+                            <br/></span>
+                    }
+                    <span><b>aantal antwoorden:</b> {users[i].CORRECT_COUNT || 0}<br/></span>
+                </div>
                 {n === 0 &&
-                    <Typography variant="h4" sx={{textAlign:'center'}}><i
-                        className="fa-solid fa-plus"/></Typography>}
+                    <h4 style={{textAlign:'center', color:'var(--darkblue'}}><i
+                        className="fa-solid fa-plus"/></h4>}
             </Fragment>
         )}
-        <Typography variant="h4" sx={{textAlign:'center'}}><i className="fa-solid fa-equals"/></Typography>
-        <Card raised={true} sx={{margin:'1em', backgroundColor:'yellow'}}>
-            <CardContent>
-                <Typography variant="h5">{mergedUser.USER_ID}</Typography>
-                <Typography variant="body1"><b>auth_uids:</b> {JSON.stringify(mergedUser.AUTH_UID)}</Typography>
-                <Typography variant="body1"><b>displayname:</b> {mergedUser.DISPLAYNAME}</Typography>
-                <Typography variant="body1"><b>donateur:</b> {mergedUser.donateur ? 'true' : 'false'}</Typography>
-                <Typography variant="body1"><b>google displayname:</b> {mergedUser.GOOGLE_DISPLAYNAME}</Typography>
-                <Typography variant="body1"><b>google email:</b> {mergedUser.GOOGLE_EMAIL}</Typography>
-                <Typography variant="body1"><b>google photourl:</b> {mergedUser.GOOGLE_PHOTOURL}</Typography>
-                <Typography variant="body1"><b>google_uid:</b> {mergedUser.GOOGLE_UID}</Typography>
-                <Typography variant="body1"><b>mastodon account:</b> {mergedUser.MASTODON_ACCOUNT}</Typography>
-                <Typography variant="body1"><b>mastodon displayname:</b> {mergedUser.MASTODON_DISPLAYNAME}</Typography>
-                <Typography variant="body1"><b>mastodon limited:</b> {mergedUser.MASTODON_LIMITED ? 'true' : 'false'}
-                </Typography>
-                <Typography variant="body1"><b>mastodon photourl:</b> {mergedUser.MASTODON_PHOTOURL}</Typography>
-                <Typography variant="body1"><b>mastodon url:</b> {mergedUser.MASTODON_URL}</Typography>
-                <Typography variant="body1"><b>twitter displayname:</b> {mergedUser.TWITTER_DISPLAYNAME}</Typography>
-                <Typography variant="body1"><b>twitter handle:</b> {mergedUser.TWITTER_HANDLE}</Typography>
-                <Typography variant="body1"><b>twitter photourl:</b> {mergedUser.TWITTER_PHOTOURL}</Typography>
-                <Typography variant="body1"><b>twitter uid:</b> {mergedUser.TWITTER_UID}</Typography>
-                <Typography variant="body1"><b>twitter uid_str:</b> {mergedUser.TWITTER_UID_STR}</Typography>
-            </CardContent>
-        </Card>
-        <Button variant="contained" onClick={() => opslaan()}>gereed</Button>
-        <Button variant="contained" onClick={() => wissel()}><a id="knoppen"/> wissel</Button>
-
+        <h4 style={{textAlign:'center', color:'var(--darkblue)'}}><i className="fa-solid fa-equals"/></h4>
+        <div style={{backgroundColor:'green'}} className='font_sans_normal'>
+            <h5>{mergedUser.USER_ID}</h5>
+            <span><b>auth_uids:</b> {JSON.stringify(mergedUser.AUTH_UID)}<br/></span>
+            <span><b>displayname:</b> {mergedUser.DISPLAYNAME}<br/></span>
+            <span><b>donateur:</b> {mergedUser.donateur ? 'true' : 'false'}<br/></span>
+            <span><b>google displayname:</b> {mergedUser.GOOGLE_DISPLAYNAME}<br/></span>
+            <span><b>google email:</b> {mergedUser.GOOGLE_EMAIL}<br/></span>
+            <span><b>google photourl:</b> {mergedUser.GOOGLE_PHOTOURL}<br/></span>
+            <span><b>google_uid:</b> {mergedUser.GOOGLE_UID}<br/></span>
+            <span><b>mastodon account:</b> {mergedUser.MASTODON_ACCOUNT}<br/></span>
+            <span><b>mastodon displayname:</b> {mergedUser.MASTODON_DISPLAYNAME}<br/></span>
+            <span><b>mastodon limited:</b> {mergedUser.MASTODON_LIMITED ? 'true' : 'false'}
+                <br/></span>
+            <span><b>mastodon photourl:</b> {mergedUser.MASTODON_PHOTOURL}<br/></span>
+            <span><b>mastodon url:</b> {mergedUser.MASTODON_URL}<br/></span>
+            <span><b>twitter displayname:</b> {mergedUser.TWITTER_DISPLAYNAME}<br/></span>
+            <span><b>twitter handle:</b> {mergedUser.TWITTER_HANDLE}<br/></span>
+            <span><b>twitter photourl:</b> {mergedUser.TWITTER_PHOTOURL}<br/></span>
+            <span><b>twitter uid:</b> {mergedUser.TWITTER_UID}<br/></span>
+            <span><b>twitter uid_str:</b> {mergedUser.TWITTER_UID_STR}<br/></span>
+        </div>
+        <hr/>
+        <input type="button" onClick={() => opslaan()} value="gereed"/>
+        <input type="button" onClick={() => wissel()}/>
+        <a id="knoppen" value="wissel"/>
     </>
 }
 

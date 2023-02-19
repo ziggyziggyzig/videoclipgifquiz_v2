@@ -1,0 +1,65 @@
+.container {
+    background-color: var(--lightblue);
+}
+
+.admin_content {
+    color: var(--yellow);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    border-width: 0;
+    text-align: center;
+    width: 100%;
+}
+
+a:link {
+    color: var(--orange);
+}
+
+a:visited {
+    color: var(--orange);
+}
+
+a:hover {
+    background-color: var(--orange);
+    color: var(--darkblue);
+}
+
+a:active {
+    color: var(--yellow);
+    background-color: transparent;
+}
+
+body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-width: 95vw;
+    min-height: 100vh;
+    background-color: var(--lightblue);
+    overflow-x: hidden;
+}
+
+table {
+    font-size: 0.8em;
+}
+
+button,input {
+    color: var(--yellow);
+    font-size: 1em;
+    border: 1px solid var(--blue);
+    box-shadow: 2px 2px var(--blue);
+    margin: 2px;
+    background-color: var(--blue);
+    font-weight: bold;
+}
+
+.admin_tabel {
+    background-color: var(--blue);
+    width: 100%;
+    font-weight: bold;
+}
+
+.admin_tabel tbody tr:nth-child(odd) {
+    background-color: var(--darkerblue);
+}

@@ -19,6 +19,7 @@ import {HuidigeRondeProvider} from "./Contexts/HuidigeRonde"
 
 import App from "./App/App"
 import {MessagesProvider} from "./Contexts/Messages"
+
 // const App = lazy(() => import("./App/App"))
 
 moment.locale(`nl`)

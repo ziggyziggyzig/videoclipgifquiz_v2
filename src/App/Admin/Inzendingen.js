@@ -1,14 +1,4 @@
 import {useCallback, useEffect, useState} from "react"
-import {
-    Box, Button,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow
-} from "@mui/material"
 
 import {collection, doc, getDocs, limit, orderBy, query, updateDoc, where, addDoc, onSnapshot} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
@@ -17,6 +7,7 @@ const Inzendingen = () => {
     const [user, setUser] = useState(null)
     const [inzendingen, setInzendingen] = useState(null)
     const [usersData, setUsersData] = useState([])
+    const [loadNumber, setLoadNumber] = useState(50)
 
     const goedkeuren = async (inzending) => {
         let zekerweten = window.confirm(`"${inzending.tekst}" van ${inzending.userData.DISPLAYNAME} goedkeuren?`)
@@ -63,7 +54,7 @@ const Inzendingen = () => {
     const loadInzendingen = useCallback(() => {
         let unsubscribe
         if (user) {
-            unsubscribe = onSnapshot(query(collection(db, 'inzendingen'), orderBy('timestamp', 'desc'), where('USER_ID', '==', user), limit(50)), (snapshot) => {
+            unsubscribe = onSnapshot(query(collection(db, 'inzendingen'), orderBy('timestamp', 'desc'), where('USER_ID', '==', user), limit(loadNumber || 50)), (snapshot) => {
                 let toState = []
                 for (let d of snapshot.docs) {
                     let user = usersData.find(o => o.USER_ID === d.data().USER_ID)
@@ -73,7 +64,7 @@ const Inzendingen = () => {
                 setInzendingen(toState)
             })
         } else {
-            unsubscribe = onSnapshot(query(collection(db, 'inzendingen'), orderBy('timestamp', 'desc'), limit(50)), (snapshot) => {
+            unsubscribe = onSnapshot(query(collection(db, 'inzendingen'), orderBy('timestamp', 'desc'), limit(loadNumber || 50)), (snapshot) => {
                 let toState = []
                 for (let d of snapshot.docs) {
                     let user = usersData.find(o => o.USER_ID === d.data().USER_ID)
@@ -86,7 +77,7 @@ const Inzendingen = () => {
         return () => {
             unsubscribe()
         }
-    }, [user, usersData])
+    }, [user, usersData, loadNumber])
 
     useEffect(() => {
         if (usersData && usersData.length > 0) loadInzendingen()
@@ -96,63 +87,54 @@ const Inzendingen = () => {
         loadUsers()
     }, [])
 
-    return usersData && usersData.length > 0 && inzendingen && inzendingen.length > 0 && <Box sx={{width:'100%'}}>
+    return usersData && usersData.length > 0 && inzendingen && inzendingen.length > 0 && <>
         {/*<TextField id="standard-basic" label="ronde" variant="standard" sx={{width:'10em'}} onChange={(e)=>setRonde(e.target.value)}*/}
         {/*sx={{margin:'2em'}}/>*/}
         <hr/>
-        <Button onClick={() => setUser(null)} variant="outlined">reset tabel</Button>
+        <input type="button" onClick={() => setUser(null)} value='reset tabel'/><br/>
         {/*<Button onClick={() => reloadData()} variant="outlined">reload</Button>*/}
 
-        <TableContainer component={Paper} sx={{marginTop:'1em', width:'100%'}}>
-            <Table sx={{width:'100vw'}} size="small" padding="none" stickyHeader={true}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>&nbsp;</TableCell>
-                        <TableCell sx={{fontSize:'0.7em'}}>tijd</TableCell>
-                        <TableCell sx={{fontSize:'0.7em'}}>ronde</TableCell>
-                        <TableCell sx={{fontSize:'0.7em'}}>medium</TableCell>
-                        <TableCell sx={{fontSize:'0.7em'}}>user</TableCell>
-                        <TableCell sx={{fontSize:'0.7em'}}>tekst</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {inzendingen.map((i, n) =>
-                        <TableRow key={n}
-                                  sx={{
-                                      '&:last-child td, &:last-child th':{border:0},
-                                      borderBottom:`${n > 0 && i.ronde !== inzendingen[n - 1].ronde ? '1px' : 0}`
-                                  }}
-                                  hover={true}
-                        >
-                            <TableCell sx={{fontSize:'0.8em'}}>
-                                <Button variant="contained"
-                                        color={i.beoordeling === 3 ? 'success' : i.beoordeling === 0 ? 'error' : 'warning'}
-                                        size="small"
-                                        onClick={i.beoordeling === 3 ? () => afkeuren(i) : () => goedkeuren(i)}
-                                >
-                                    &nbsp;
-                                </Button>
-                            </TableCell>
-                            <TableCell sx={{fontSize:'0.8em'}}>
-                                {new Date(i.timestamp).toLocaleString()}</TableCell>
-                            <TableCell sx={{fontSize:'0.8em'}}>
-                                {i.ronde}</TableCell>
-                            <TableCell sx={{fontSize:'0.8em'}}>
-                                {i.medium === 'twitter' && <i className="fab fa-twitter"/>}
-                                {i.medium === 'google' && <i className="fab fa-google"/>}
-                                {i.medium === 'mastodon' && <i className="fab fa-mastodon"/>}
-                            </TableCell>
-                            <TableCell sx={{fontSize:'0.8em'}}
-                                       onClick={() => setUser(i.USER_ID)}>{i.userData.DISPLAYNAME}</TableCell>
-                            <TableCell sx={{fontSize:'0.8em'}}>
-                                {i.tekst}</TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    </Box>
+        <table className='font_sans_normal admin_tabel'>
+            <thead>
+            <tr>
+                <td>&nbsp;</td>
+                <td>tijd</td>
+                <td>ronde</td>
+                <td>medium</td>
+                <td>user</td>
+                <td>tekst</td>
+            </tr>
+            </thead>
+            <tbody>
+            {inzendingen.map((i, n) =>
+                <tr key={n}
 
+                >
+                    <td>
+                        <input type='button' style={{backgroundColor:i.beoordeling === 3 ? 'green' : i.beoordeling === 0 ? 'red' : 'yellow'}}
+                                onClick={i.beoordeling === 3 ? () => afkeuren(i) : () => goedkeuren(i)}
+                        />
+                    </td>
+                    <td>
+                        {new Date(i.timestamp).toLocaleString()}</td>
+                    <td>
+                        {i.ronde}</td>
+                    <td>
+                        {i.medium === 'twitter' && <i className="fab fa-twitter"/>}
+                        {i.medium === 'google' && <i className="fab fa-google"/>}
+                        {i.medium === 'mastodon' && <i className="fab fa-mastodon"/>}
+                    </td>
+                    <td
+                        onClick={() => setUser(i.USER_ID)}>{i.userData.DISPLAYNAME}</td>
+                    <td>
+                        {i.tekst}</td>
+                </tr>
+            )}
+            </tbody>
+        </table>
+        <input type='button' onClick={() => setLoadNumber(loadNumber + 50)} value='50 meer...'/>
+
+    </>
 }
 
 
