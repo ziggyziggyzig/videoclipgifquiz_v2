@@ -122,8 +122,10 @@ const Navigatie = ({
             <i className="fa-solid fa-bars"/>
         </div>
         <Suspense fallback={<Loading/>}>
-            {currentUserData && currentUserData.USER_ID && currentUserData.USER_ID === 'Qt1Ra4sGHrTHvgsJg9e7' &&
-                <Messages showMessages={showMessages} unread={messages && messages.unread} USER_ID={currentUserData.USER_ID}/>}
+            {currentUserData && currentUserData.USER_ID &&
+                <Messages showMessages={showMessages} unread={messages && messages.unread}
+                          USER_ID={currentUserData.USER_ID}/>
+            }
             <UserMenu showUserMenu={showUserMenu} inloggen={(p) => login(p)} uitloggen={() => uitloggen()}/>
             <Menu showMenu={showMenu}/>
         </Suspense>

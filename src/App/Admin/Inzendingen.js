@@ -1,7 +1,8 @@
 import {useCallback, useEffect, useState} from "react"
 
-import {collection, doc, getDocs, limit, orderBy, query, updateDoc, where, addDoc, onSnapshot} from "firebase/firestore"
+import {collection, doc, getDocs, limit, orderBy, query, updateDoc, where,  onSnapshot} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
+import {send_message} from "../../functions/messages"
 
 const Inzendingen = () => {
     const [user, setUser] = useState(null)
@@ -13,12 +14,9 @@ const Inzendingen = () => {
         let zekerweten = window.confirm(`"${inzending.tekst}" van ${inzending.userData.DISPLAYNAME} goedkeuren?`)
         if (zekerweten) {
             await updateDoc(doc(db, 'inzendingen', String(inzending.DOC_ID)), {beoordeling:3})
-            await addDoc(collection(db, 'messages'), {
-                FOR_USER_ID:inzending.USER_ID,
-                PUSHED:false,
-                READ:[],
-                TIMESTAMP:Date.now(),
-                TEXT:`Je antwoord '${inzending.tekst}' is alsnog goedgekeurd, gefeliciteerd!`
+            await send_message({
+                to_user_id:inzending.USER_ID,
+                text:`Je antwoord '${inzending.tekst}' is alsnog goedgekeurd, gefeliciteerd!`
             })
             return loadInzendingen()
         } else {
@@ -36,10 +34,10 @@ const Inzendingen = () => {
         }
     }
 
-    const reloadData = async () => {
-        await loadUsers()
-        return loadInzendingen()
-    }
+    // const reloadData = async () => {
+    //     await loadUsers()
+    //     return loadInzendingen()
+    // }
 
     const loadUsers = async () => {
         let snapshot = await getDocs(collection(db, 'users'))
@@ -91,10 +89,10 @@ const Inzendingen = () => {
         {/*<TextField id="standard-basic" label="ronde" variant="standard" sx={{width:'10em'}} onChange={(e)=>setRonde(e.target.value)}*/}
         {/*sx={{margin:'2em'}}/>*/}
         <hr/>
-        <input type="button" onClick={() => setUser(null)} value='reset tabel'/><br/>
+        <input type="button" onClick={() => setUser(null)} value="reset tabel"/><br/>
         {/*<Button onClick={() => reloadData()} variant="outlined">reload</Button>*/}
 
-        <table className='font_sans_normal admin_tabel'>
+        <table className="font_sans_normal admin_tabel">
             <thead>
             <tr>
                 <td>&nbsp;</td>
@@ -111,12 +109,22 @@ const Inzendingen = () => {
 
                 >
                     <td>
-                        <input type='button' style={{backgroundColor:i.beoordeling === 3 ? 'green' : i.beoordeling === 0 ? 'red' : 'yellow'}}
-                                onClick={i.beoordeling === 3 ? () => afkeuren(i) : () => goedkeuren(i)}
+                        <input type="button"
+                               style={{backgroundColor:i.beoordeling === 3 ? 'lime' : i.beoordeling === 0 ? 'orangered' : 'yellow'}}
+                               onClick={i.beoordeling === 3 ? () => afkeuren(i) : () => goedkeuren(i)} value={' '}
                         />
                     </td>
-                    <td>
-                        {new Date(i.timestamp).toLocaleString()}</td>
+                    <td className="admin_inzendingen_datum_lang">
+                        {new Date(i.timestamp).toLocaleString()}
+                    </td>
+                    <td className="admin_inzendingen_datum_kort">
+                        {new Date(i.timestamp).toLocaleString('nl-NL', {
+                            weekday:"short",
+                            hour:"numeric",
+                            minute:"numeric",
+                            second:"numeric"
+                        })}
+                    </td>
                     <td>
                         {i.ronde}</td>
                     <td>
@@ -126,13 +134,13 @@ const Inzendingen = () => {
                     </td>
                     <td
                         onClick={() => setUser(i.USER_ID)}>{i.userData.DISPLAYNAME}</td>
-                    <td>
+                    <td style={{color:i.beoordeling === 3 ? 'lime' : i.beoordeling === 0 ? 'orangered' : 'yellow'}}>
                         {i.tekst}</td>
                 </tr>
             )}
             </tbody>
         </table>
-        <input type='button' onClick={() => setLoadNumber(loadNumber + 50)} value='50 meer...'/>
+        <input type="button" onClick={() => setLoadNumber(loadNumber + 50)} value="50 meer..."/>
 
     </>
 }

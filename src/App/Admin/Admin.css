@@ -9,7 +9,7 @@
     padding: 10px;
     border-width: 0;
     text-align: center;
-    width: 100%;
+    max-width: 95vw;
 }
 
 a:link {
@@ -30,15 +30,15 @@ a:active {
     background-color: transparent;
 }
 
-body {
-    margin: 0;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-width: 95vw;
-    min-height: 100vh;
-    background-color: var(--lightblue);
-    overflow-x: hidden;
-}
+/*body {*/
+/*    margin: 0;*/
+/*    -webkit-font-smoothing: antialiased;*/
+/*    -moz-osx-font-smoothing: grayscale;*/
+/*    min-width: 95vw;*/
+/*    min-height: 100vh;*/
+/*    background-color: var(--lightblue);*/
+/*    overflow-x: hidden;*/
+/*}*/
 
 table {
     font-size: 0.8em;
@@ -48,10 +48,15 @@ button,input {
     color: var(--yellow);
     font-size: 1em;
     border: 1px solid var(--blue);
-    box-shadow: 2px 2px var(--blue);
+    box-shadow: 1px 1px black;
     margin: 2px;
     background-color: var(--blue);
     font-weight: bold;
+    cursor: pointer;
+}
+
+.button_groot {
+    font-size: 2em !important;
 }
 
 .admin_tabel {
@@ -62,4 +67,22 @@ button,input {
 
 .admin_tabel tbody tr:nth-child(odd) {
     background-color: var(--darkerblue);
+}
+
+@media screen and (max-width: 800px) {
+    .admin_inzendingen_datum_lang {
+        display: none;
+    }
+    .admin_inzendingen_datum_kort {
+        display: table-cell;
+    }
+}
+
+@media screen and (min-width: 801px) {
+    .admin_inzendingen_datum_kort {
+        display: none;
+    }
+    .admin_inzendingen_datum_lang {
+        display: table-cell;
+    }
 }

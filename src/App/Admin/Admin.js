@@ -23,25 +23,34 @@ const Admin = () => {
         <>
             <button
                 style={{backgroundColor:showNieuweClip ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowNieuweClip(!showNieuweClip)}>
-                <i className="fa-sharp fa-solid  fa-cloud-arrow-up" title="nieuwe clip"/></button>
+                onClick={() => setShowNieuweClip(!showNieuweClip)} className="button_groot">
+                <i className="fa-sharp fa-solid  fa-cloud-arrow-up" title="nieuwe clip"/>
+            </button>
             <button
                 style={{backgroundColor:showClips ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowClips(!showClips)}><i className="fa-sharp fa-solid  fa-film"/></button>
+                onClick={() => setShowClips(!showClips)} className="button_groot">
+                <i className="fa-sharp fa-solid  fa-film"/>
+            </button>
             <button
                 style={{backgroundColor:showRondes ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowRondes(!showRondes)}><i className="fa-sharp fa-regular fa-calendar-days"/>
+                onClick={() => setShowRondes(!showRondes)} className='button_groot'>
+                <i className="fa-sharp fa-regular fa-calendar-days"/>
             </button>
             <button
                 style={{backgroundColor:showInzendingen ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowInzendingen(!showInzendingen)}><i className="fa-sharp fa-solid  fa-comment"/>
+                onClick={() => setShowInzendingen(!showInzendingen)} className='button_groot'>
+                <i className="fa-sharp fa-solid  fa-comment"/>
             </button>
             <button
                 style={{backgroundColor:showUsers ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowUsers(!showUsers)}><i className="fa-sharp fa-solid  fa-users"/></button>
+                onClick={() => setShowUsers(!showUsers)} className='button_groot'>
+                <i className="fa-sharp fa-solid  fa-users"/>
+            </button>
             <button
                 style={{backgroundColor:showCycles ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowCycles(!showCycles)}><i className="fa-sharp fa-solid  fa-arrows-spin"/></button>
+                onClick={() => setShowCycles(!showCycles)} className='button_groot'>
+                <i className="fa-sharp fa-solid  fa-arrows-spin"/>
+            </button>
         </>
         {showNieuweClip && <NieuweClip/>}
         {showClips && <Clips/>}
