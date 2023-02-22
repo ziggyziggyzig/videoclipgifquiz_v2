@@ -317,16 +317,33 @@ const Speler = () => {
                 {((spelerData.FAST_FIVE && spelerData.FAST_FIVE.length > 0) || (spelerData.SLOW_FIVE && spelerData.SLOW_FIVE.length > 0)) &&
                     <Lijn/>
                 }
-                {spelerData.MEDIUM_COUNT && spelerData.MEDIUM_COUNT.length > 0 &&
+                {spelerData.BRON_COUNT && spelerData.BRON_COUNT.length > 0 &&
                     <>
                         <Links>
                             antwoord-methodes
                         </Links>
 
                         <Rechts>
+                            {spelerData.BRON_COUNT && spelerData.BRON_COUNT.length > 0 && spelerData.BRON_COUNT.map(w =>
+                                <Fragment key={w.bron}>
+                                    {w.bron.replace('_',' ')}: {w.count}x
+                                    ({Math.round(w.count / spelerData.BRON_COUNT.reduce((partialSum, a) => partialSum + a.count, 0) * 100)}%
+                                    van alle antwoorden)<br/>
+                                </Fragment>
+                            )}
+                        </Rechts>
+                    </>
+                }
+                {spelerData.MEDIUM_COUNT && spelerData.MEDIUM_COUNT.length > 0 &&
+                    <>
+                        <Links>
+                            antwoord-kanalen
+                        </Links>
+
+                        <Rechts>
                             {spelerData.MEDIUM_COUNT && spelerData.MEDIUM_COUNT.length > 0 && spelerData.MEDIUM_COUNT.map(w =>
                                 <Fragment key={w.medium}>
-                                    {w.medium}: {w.count}x
+                                    <i className={`fa-brands fa-${w.medium}`}/> {w.medium.replace('_',' ')}: {w.count}x
                                     ({Math.round(w.count / spelerData.MEDIUM_COUNT.reduce((partialSum, a) => partialSum + a.count, 0) * 100)}%
                                     van alle antwoorden)<br/>
                                 </Fragment>

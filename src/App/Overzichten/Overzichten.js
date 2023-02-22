@@ -19,7 +19,6 @@ const Overzichten = () => {
             let toContext = []
             for (let user of users.docs) {
                 let {
-                    TWITTER_UID,
                     TWITTER_UID_STR,
                     GOOGLE_UID,
                     MASTODON_ACCOUNT,

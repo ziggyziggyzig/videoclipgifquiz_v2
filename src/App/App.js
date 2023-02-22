@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react"
+import {useCallback, useContext, useEffect, useState} from "react"
 import './App.css'
 
 import * as ReactGA from "react-ga"
@@ -73,56 +73,59 @@ const App = () => {
         else return
         return signInWithPopup(auth, loginProvider)
             .then(async (result) => {
-                let user = result.user
-                const db_user_auth = await getDocs(query(collection(db, 'users'), where('AUTH_UID', 'array-contains', user.uid)))
-                if (db_user_auth.size > 0) {
-                    dispatchCurrentUserData({
-                        type:"SET",
-                        currentUserData:{
-                            PROVIDER:user.providerData[0].providerId,
-                            USER_ID:db_user_auth.docs[0].id, ...db_user_auth.docs[0].data()
-                        }
-                    })
-                } else if (user.providerData[0].providerId === 'twitter.com') {
-                    const db_user_twitter = await getDocs(query(collection(db, 'users'), where('TWITTER_UID_STR', '==', String(user.providerData[0].uid))))
-                    if (db_user_twitter.size > 0) {
-                        let data = db_user_twitter.docs[0].data()
-                        data.AUTH_UID.push(user.uid)
-                        dispatchCurrentUserData({
-                            type:"SET",
-                            currentUserData:{
-                                PROVIDER:user.providerData[0].providerId,
-                                USER_ID:db_user_twitter.docs[0].id, ...data
-                            }
-                        })
-                        await updateDoc(doc(db, 'users', db_user_twitter.docs[0].id), data)
-                    } else {
-                        setOnthoudPagina(window.location.href)
-                        setNewUser(user)
-                        setToonLoginPagina(true)
-                    }
-                } else if (user.providerData[0].providerId === 'google.com') {
-                    const db_user_google = await getDocs(query(collection(db, 'users'), where('GOOGLE_UID', '==', String(user.providerData[0].uid))))
-                    if (db_user_google.size > 0) {
-                        let data = db_user_google.docs[0].data()
-                        data.AUTH_UID.push(user.uid)
-                        dispatchCurrentUserData({
-                            type:"SET",
-                            currentUserData:{
-                                PROVIDER:user.providerData[0].providerId,
-                                USER_ID:db_user_google.docs[0].id, ...data
-                            }
-                        })
-                        await updateDoc(doc(db, 'users', db_user_google.docs[0].id), data)
-                    } else {
-                        setOnthoudPagina(window.location.href)
-                        setNewUser(user)
-                        setToonLoginPagina(true)
-                    }
-                }
+                if (result.user) await processLogin(result.user)
             })
             .catch((error) => console.error(error))
     }
+
+    const processLogin = useCallback(async (user) => {
+        const db_user_auth = await getDocs(query(collection(db, 'users'), where('AUTH_UID', 'array-contains', user.uid)))
+        if (db_user_auth.size > 0) {
+            dispatchCurrentUserData({
+                type:"SET",
+                currentUserData:{
+                    PROVIDER:user.providerData[0].providerId,
+                    USER_ID:db_user_auth.docs[0].id, ...db_user_auth.docs[0].data()
+                }
+            })
+        } else if (user.providerData[0].providerId === 'twitter.com') {
+            const db_user_twitter = await getDocs(query(collection(db, 'users'), where('TWITTER_UID_STR', '==', String(user.providerData[0].uid))))
+            if (db_user_twitter.size > 0) {
+                let data = db_user_twitter.docs[0].data()
+                data.AUTH_UID.push(user.uid)
+                dispatchCurrentUserData({
+                    type:"SET",
+                    currentUserData:{
+                        PROVIDER:user.providerData[0].providerId,
+                        USER_ID:db_user_twitter.docs[0].id, ...data
+                    }
+                })
+                await updateDoc(doc(db, 'users', db_user_twitter.docs[0].id), data)
+            } else {
+                setOnthoudPagina(window.location.href)
+                setNewUser(user)
+                setToonLoginPagina(true)
+            }
+        } else if (user.providerData[0].providerId === 'google.com') {
+            const db_user_google = await getDocs(query(collection(db, 'users'), where('GOOGLE_UID', '==', String(user.providerData[0].uid))))
+            if (db_user_google.size > 0) {
+                let data = db_user_google.docs[0].data()
+                data.AUTH_UID.push(user.uid)
+                dispatchCurrentUserData({
+                    type:"SET",
+                    currentUserData:{
+                        PROVIDER:user.providerData[0].providerId,
+                        USER_ID:db_user_google.docs[0].id, ...data
+                    }
+                })
+                await updateDoc(doc(db, 'users', db_user_google.docs[0].id), data)
+            } else {
+                setOnthoudPagina(window.location.href)
+                setNewUser(user)
+                setToonLoginPagina(true)
+            }
+        }
+    },[dispatchCurrentUserData])
 
     const uitloggen = async () => {
         await signOut(auth)
@@ -139,59 +142,14 @@ const App = () => {
     useEffect(() => {
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const db_user_auth = await getDocs(query(collection(db, 'users'), where('AUTH_UID', 'array-contains', user.uid)))
-                if (db_user_auth.size > 0) {
-                    dispatchCurrentUserData({
-                        type:"SET",
-                        currentUserData:{
-                            PROVIDER:user.providerData[0].providerId,
-                            USER_ID:db_user_auth.docs[0].id, ...db_user_auth.docs[0].data()
-                        }
-                    })
-                } else if (user.providerData[0].providerId === 'twitter.com') {
-                    const db_user_twitter = await getDocs(query(collection(db, 'users'), where('TWITTER_UID_STR', '==', String(user.providerData[0].uid))))
-                    if (db_user_twitter.size > 0) {
-                        let data = db_user_twitter.docs[0].data()
-                        data.AUTH_UID.push(user.uid)
-                        dispatchCurrentUserData({
-                            type:"SET",
-                            currentUserData:{
-                                PROVIDER:user.providerData[0].providerId,
-                                USER_ID:db_user_twitter.docs[0].id, ...data
-                            }
-                        })
-                        await updateDoc(doc(db, 'users', db_user_twitter.docs[0].id), data)
-                    } else {
-                        setOnthoudPagina(window.location.href)
-                        setNewUser(user)
-                        setToonLoginPagina(true)
-                    }
-                } else if (user.providerData[0].providerId === 'google.com') {
-                    const db_user_google = await getDocs(query(collection(db, 'users'), where('GOOGLE_UID', '==', String(user.providerData[0].uid))))
-                    if (db_user_google.size > 0) {
-                        let data = db_user_google.docs[0].data()
-                        data.AUTH_UID.push(user.uid)
-                        dispatchCurrentUserData({
-                            type:"SET",
-                            currentUserData:{
-                                PROVIDER:user.providerData[0].providerId,
-                                USER_ID:db_user_google.docs[0].id, ...data
-                            }
-                        })
-                        await updateDoc(doc(db, 'users', db_user_google.docs[0].id), data)
-                    } else {
-                        setOnthoudPagina(window.location.href)
-                        setNewUser(user)
-                        setToonLoginPagina(true)
-                    }
-                }
+                await processLogin(user)
             } else {
                 setToonLoginPagina(false)
                 dispatchCurrentUserData({type:"SET", currentUserData:null})
             }
             return true
         })
-    }, [dispatchCurrentUserData])
+    }, [dispatchCurrentUserData,processLogin])
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, "tellers", "huidige_ronde"), async (d) => {

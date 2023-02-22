@@ -206,8 +206,7 @@ const MergeUsers = ({users, done}) => {
         </div>
         <hr/>
         <input type="button" onClick={() => opslaan()} value="gereed"/>
-        <input type="button" onClick={() => wissel()}/>
-        <a id="knoppen" value="wissel"/>
+        <a id="knoppen" href='#'><input type="button" onClick={() => wissel()} value="wissel"/></a>
     </>
 }
 
