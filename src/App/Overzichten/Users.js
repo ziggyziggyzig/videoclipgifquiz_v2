@@ -4,18 +4,19 @@ import {CurrentUserContext} from "../../Contexts/CurrentUser"
 import {Breed} from "./GridItems"
 import {Duration} from "luxon"
 import Loading from "../Loading/Loading"
+import {UsersContext} from "../../Contexts/Users"
 
-const Users = ({usersData}) => {
-    const [alleUsers, setAlleUsers] = useState([])
+const Users = () => {
     const [alleUsersFiltered, setAlleUsersFiltered] = useState([])
 
     const [{currentUserData}] = useContext(CurrentUserContext)
+    const [{usersData}] = useContext(UsersContext)
 
     const [sorteerveld, setSorteerveld] = useState('CORRECT_COUNT')
     const [sorteervolgorde, setSorteervolgorde] = useState(true)
 
     useEffect(() => {
-        let s = JSON.parse(JSON.stringify(alleUsers))
+        let s = JSON.parse(JSON.stringify(usersData))
         s.sort((a, b) => {
             const varA = (typeof a[sorteerveld] === 'string')
                 ? a[sorteerveld].toUpperCase().replace('_', '') : a[sorteerveld]
@@ -34,41 +35,7 @@ const Users = ({usersData}) => {
         })
         // if (!sorteervolgorde) s.reverse()
         setAlleUsersFiltered(s)
-    }, [sorteerveld, sorteervolgorde, alleUsers])
-
-    useEffect(() => {
-        const loadData = async () => {
-            let us = []
-            for (let u of usersData) {
-                if (u.OWN_ACCOUNT) continue
-                let SERIES_LONGEST
-                if (u.SERIES_LIST) {
-                    let alle_series = u.SERIES_LIST
-                    alle_series.sort((a, b) => b.LENGTH === a.LENGTH ? a.SERIES[0].ronde - b.SERIES[0].ronde : b.LENGTH - a.LENGTH)
-                    SERIES_LONGEST = alle_series[0]
-                }
-                us.push({
-                    USER_ID:u.USER_ID,
-                    DISPLAYNAME:u.DISPLAYNAME || `@${u.TWITTER_HANDLE}`,
-                    CORRECT_COUNT:u.CORRECT_COUNT,
-                    WIN_COUNT:u.WIN_COUNT,
-                    BONUS_COUNT:u.BONUS_COUNT || 0,
-                    TAART_COUNT:u.TAART_COUNT || 0,
-                    FAST_ONE:u.FAST_FIVE && u.FAST_FIVE.length > 0 ? u.FAST_FIVE[0] : null,
-                    FAST_ONE_SPEED:u.FAST_FIVE && u.FAST_FIVE.length > 0 ? u.FAST_FIVE[0].speed : null,
-                    SERIES_LONGEST:SERIES_LONGEST || null,
-                    SERIES_LONGEST_SIZE:SERIES_LONGEST && SERIES_LONGEST.LENGTH ? SERIES_LONGEST.LENGTH : 0,
-                    TWITTER:u.TWITTER,
-                    GOOGLE:u.GOOGLE,
-                    MASTODON:u.MASTODON
-                })
-            }
-            us.sort((a, b) => b.CORRECT_COUNT === a.CORRECT_COUNT ? (b.WIN_COUNT === a.WIN_COUNT ? a.DISPLAYNAME.localeCompare(b.DISPLAYNAME) : b.WIN_COUNT - a.WIN_COUNT) : b.CORRECT_COUNT - a.CORRECT_COUNT)
-            setAlleUsers(us)
-        }
-
-        if (usersData && usersData.length > 0) loadData()
-    }, [usersData])
+    }, [sorteerveld, sorteervolgorde, usersData])
 
     const setSorting = (veld) => {
         if (sorteerveld === veld) {

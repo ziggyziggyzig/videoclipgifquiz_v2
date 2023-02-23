@@ -1,4 +1,4 @@
-import {useContext, useState} from "react"
+import {useContext, useEffect, useState} from "react"
 
 import {CurrentUserContext} from "../../Contexts/CurrentUser"
 import NieuweClip from "./NieuweClip"
@@ -10,7 +10,7 @@ import Cycles from "./Cycles"
 
 import './Admin.css'
 
-const Admin = () => {
+const Admin = ({setLoadAll}) => {
     const [{currentUserData}] = useContext(CurrentUserContext)
     const [showClips, setShowClips] = useState(false)
     const [showNieuweClip, setShowNieuweClip] = useState(false)
@@ -18,6 +18,10 @@ const Admin = () => {
     const [showInzendingen, setShowInzendingen] = useState(false)
     const [showUsers, setShowUsers] = useState(false)
     const [showCycles, setShowCycles] = useState(false)
+
+    useEffect(()=>{
+        setLoadAll()
+    },[setLoadAll])
 
     return currentUserData && currentUserData.OWN_ACCOUNT && <div className="admin_content">
         <>

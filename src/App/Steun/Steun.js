@@ -4,8 +4,12 @@ import {storage} from "../../Firebase/Firebase"
 
 import ('./Steun.css')
 
-const Steun = () => {
+const Steun = ({setLoadAll}) => {
     const [payPalImage, setPayPalImage] = useState(null)
+
+    useEffect(()=>{
+        setLoadAll()
+    },[setLoadAll])
 
     useEffect(() => {
         const fetchHeader = async () =>

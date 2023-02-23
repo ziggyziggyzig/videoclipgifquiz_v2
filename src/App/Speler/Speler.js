@@ -10,7 +10,9 @@ import {Rondelink} from "../Links/Links"
 import Loading from "../Loading/Loading"
 import {HuidigeRondeContext} from "../../Contexts/HuidigeRonde"
 
-const Speler = () => {
+const Speler = ({setLoadAll}) => {
+    let spelerId = useParams().spelerId
+
     const [{currentUserData}, dispatchCurrentUser] = useContext(CurrentUserContext)
     const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
 
@@ -20,7 +22,9 @@ const Speler = () => {
     const [displayNameSaved, setDisplayNameSaved] = useState(false)
     const [decadeList, setDecadeList] = useState([])
 
-    const spelerId = useParams().spelerId || (currentUserData && currentUserData.USER_ID) || null
+    useEffect(() => {
+        setLoadAll()
+    }, [setLoadAll])
 
     const changeDisplayName = (e) => setNewDisplayName(e.target.value.substring(0, 32).normalize("NFD")
         .replace(/[\u0300-\u036f\u0020\u0027\u002d\u002e\u002f]/g, ""))
@@ -38,7 +42,6 @@ const Speler = () => {
 
     useEffect(() => {
         const getData = async () => {
-            if (!spelerId && !currentUserData) window.location = '/'
             setOwnProfile(false)
             if (currentUserData && spelerId) spelerId === currentUserData.USER_ID && setOwnProfile(true)
             let spelerDoc = await getDoc(doc(db, 'users', spelerId))
@@ -47,7 +50,9 @@ const Speler = () => {
                 setNewDisplayName(spelerDoc.data().DISPLAYNAME)
             }
         }
-        spelerId && getData()
+        if (spelerId) {
+            getData()
+        }
     }, [spelerId, currentUserData])
 
     const toggle = (elementId, c) => {
@@ -326,7 +331,7 @@ const Speler = () => {
                         <Rechts>
                             {spelerData.BRON_COUNT && spelerData.BRON_COUNT.length > 0 && spelerData.BRON_COUNT.map(w =>
                                 <Fragment key={w.bron}>
-                                    {w.bron.replace('_',' ')}: {w.count}x
+                                    {w.bron.replace('_', ' ')}: {w.count}x
                                     ({Math.round(w.count / spelerData.BRON_COUNT.reduce((partialSum, a) => partialSum + a.count, 0) * 100)}%
                                     van alle antwoorden)<br/>
                                 </Fragment>
@@ -343,7 +348,7 @@ const Speler = () => {
                         <Rechts>
                             {spelerData.MEDIUM_COUNT && spelerData.MEDIUM_COUNT.length > 0 && spelerData.MEDIUM_COUNT.map(w =>
                                 <Fragment key={w.medium}>
-                                    <i className={`fa-brands fa-${w.medium}`}/> {w.medium.replace('_',' ')}: {w.count}x
+                                    <i className={`fa-brands fa-${w.medium}`}/> {w.medium.replace('_', ' ')}: {w.count}x
                                     ({Math.round(w.count / spelerData.MEDIUM_COUNT.reduce((partialSum, a) => partialSum + a.count, 0) * 100)}%
                                     van alle antwoorden)<br/>
                                 </Fragment>

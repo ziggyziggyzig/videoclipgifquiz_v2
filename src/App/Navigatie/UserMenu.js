@@ -22,7 +22,7 @@ const UserMenu = ({showUserMenu, inloggen, uitloggen}) => {
                         <hr/>
                     </td>
                 </tr>
-                <tr className="navigatie_imitatie_link" onClick={() => window.location = `/speler`}>
+                <tr className="navigatie_imitatie_link" onClick={() => window.location = `/speler/${currentUserData.USER_ID}`}>
                     <td>
                         profiel
                     </td>

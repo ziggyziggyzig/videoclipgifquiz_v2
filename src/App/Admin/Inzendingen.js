@@ -1,13 +1,14 @@
-import {useCallback, useEffect, useState} from "react"
+import {useCallback, useContext, useEffect, useState} from "react"
 
-import {collection, doc, getDocs, limit, orderBy, query, updateDoc, where,  onSnapshot} from "firebase/firestore"
+import {collection, doc, limit, orderBy, query, updateDoc, where, onSnapshot} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 import {send_message} from "../../functions/messages"
+import {UsersContext} from "../../Contexts/Users"
 
 const Inzendingen = () => {
     const [user, setUser] = useState(null)
+    const [{usersData}] = useContext(UsersContext)
     const [inzendingen, setInzendingen] = useState(null)
-    const [usersData, setUsersData] = useState([])
     const [loadNumber, setLoadNumber] = useState(50)
 
     const goedkeuren = async (inzending) => {
@@ -38,16 +39,6 @@ const Inzendingen = () => {
     //     await loadUsers()
     //     return loadInzendingen()
     // }
-
-    const loadUsers = async () => {
-        let snapshot = await getDocs(collection(db, 'users'))
-        let toState = []
-        for (let d of snapshot.docs) {
-            toState.push({USER_ID:d.id, ...d.data()})
-
-        }
-        return setUsersData(toState)
-    }
 
     const loadInzendingen = useCallback(() => {
         let unsubscribe
@@ -80,10 +71,6 @@ const Inzendingen = () => {
     useEffect(() => {
         if (usersData && usersData.length > 0) loadInzendingen()
     }, [usersData, user, loadInzendingen])
-
-    useEffect(() => {
-        loadUsers()
-    }, [])
 
     return usersData && usersData.length > 0 && inzendingen && inzendingen.length > 0 && <>
         {/*<TextField id="standard-basic" label="ronde" variant="standard" sx={{width:'10em'}} onChange={(e)=>setRonde(e.target.value)}*/}

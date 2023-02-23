@@ -8,11 +8,15 @@ import {db} from "../../Firebase/Firebase"
 import {UsersContext} from "../../Contexts/Users"
 import {HuidigeRondeContext} from "../../Contexts/HuidigeRonde"
 
-const Overzichten = () => {
+const Overzichten = ({setLoadAll}) => {
     const [showRondes, setShowRondes] = useState(false)
     const [showUsers, setShowUsers] = useState(false)
     const [{usersData}, dispatchUsers] = useContext(UsersContext)
     const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
+
+    useEffect(()=>{
+        setLoadAll()
+    },[setLoadAll])
 
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(db, "users"), async (users) => {

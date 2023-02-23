@@ -1,11 +1,10 @@
 import {useParams} from "react-router-dom"
 import {lazy, useCallback, useEffect, useState, Suspense, useContext} from "react"
-import {collection, doc, getDoc, onSnapshot} from "firebase/firestore"
+import { doc, getDoc} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 import "./Quiz.css"
 import Loading from "../Loading/Loading"
 import {HuidigeRondeContext} from "../../Contexts/HuidigeRonde"
-import {UsersContext} from "../../Contexts/Users"
 import {ToonRondeContext} from "../../Contexts/ToonRonde"
 
 const Opgave = lazy(() => import('./Opgave/Opgave'))
@@ -14,13 +13,11 @@ const Over = lazy(() => import('../Over/Over'))
 const Statistieken = lazy(() => import('../Erelijst/Erelijst'))
 
 
-const Quiz = () => {
+const Quiz = ({loadAll,setLoadAll}) => {
     const rondeId = parseInt(useParams().rondeId, 10) || null
-    const [, dispatchUsers] = useContext(UsersContext)
     const [, setGevraagdeClipData] = useState(null)
-    const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
     const [{toonRondeNummer}, dispatchToonRonde] = useContext(ToonRondeContext)
-    const [loadingStep, setLoadingStep] = useState(0)
+    const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
 
     const setRound = useCallback((id) => {
         const getData = async () => {
@@ -60,71 +57,10 @@ const Quiz = () => {
         }
     }, [rondeId, huidigeRondeNummer, setRound])
 
-    useEffect(() => {
-        if (loadingStep >= 1) {
-            const unsubscribe = onSnapshot(collection(db, "users"), async (users) => {
-                let toContext = []
-                for (let user of users.docs) {
-                    let {
-                        TWITTER_UID_STR,
-                        GOOGLE_UID,
-                        MASTODON_ACCOUNT,
-                        MASTODON_URL,
-                        MASTODON_DISPLAYNAME,
-                        BONUS_COUNT,
-                        DISPLAYNAME,
-                        OWN_ACCOUNT,
-                        TAART_COUNT,
-                        TWITTER_HANDLE,
-                        CORRECT_COUNT,
-                        SERIES_LIST,
-                        WIN_COUNT,
-                        FAST_FIVE,
-                        WIN_LIST,
-                        donateur,
-                        MEDIUM_COUNT,
-                        BRON_COUNT
-                    } = user.data()
-                    if (huidigeRondeNummer && WIN_LIST && WIN_LIST.length > 0) {
-                        let i = WIN_LIST.findIndex(o => o.ronde === huidigeRondeNummer)
-                        if (i > -1) delete WIN_LIST[i].tekst
-                    }
-                    toContext.push({
-                        BONUS_COUNT:BONUS_COUNT || 0,
-                        DISPLAYNAME:DISPLAYNAME,
-                        OWN_ACCOUNT:OWN_ACCOUNT,
-                        TAART_COUNT:TAART_COUNT,
-                        TWITTER_HANDLE:TWITTER_HANDLE,
-                        USER_ID:user.id,
-                        CORRECT_COUNT:CORRECT_COUNT || 0,
-                        SERIES_LIST:SERIES_LIST || [],
-                        WIN_COUNT:WIN_COUNT || 0,
-                        FAST_FIVE:FAST_FIVE || [],
-                        TWITTER:!!TWITTER_UID_STR,
-                        GOOGLE:!!GOOGLE_UID,
-                        MASTODON:!!MASTODON_ACCOUNT,
-                        MASTODON_URL:MASTODON_URL || null,
-                        MASTODON_DISPLAYNAME:MASTODON_DISPLAYNAME || null,
-                        WIN_LIST:WIN_LIST || [],
-                        donateur:donateur || false,
-                        MEDIUM_COUNT:MEDIUM_COUNT || [],
-                        BRON_COUNT:BRON_COUNT || []
-                    })
-                }
-                dispatchUsers({type:"SET", usersData:toContext})
-
-            })
-
-            return () => {
-                unsubscribe()
-            }
-        }
-    }, [dispatchUsers, huidigeRondeNummer, loadingStep])
-
     return <div className="quiz_container">
         <Suspense fallback={<Loading/>}>
-            {loadingStep >= 0 && <Opgave loadingComplete={() => setLoadingStep(1)}/>}
-            {loadingStep >= 1 && <>
+            <Opgave loadingComplete={() => setLoadAll()}/>
+            {loadAll && <>
                 <Inzendingen/>
                 <Statistieken/>
                 <Over/>

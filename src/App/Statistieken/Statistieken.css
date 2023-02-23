@@ -1,0 +1,88 @@
+.statistieken {
+    text-align: center;
+    display: grid;
+    column-gap: 10px;
+    background-color: var(--darkblue);
+    color: var(--yellow);
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    border-style: outset;
+    border-color: var(--lightblue);
+    border-width: 2px;
+}
+
+table tr td:nth-child(1) {
+    text-align: right !important;
+    font-weight: 700;
+}
+
+table tr td:nth-child(2) {
+    text-align: left !important;
+}
+
+td {
+    padding: 0 10px;
+    vertical-align: top;
+}
+
+hr {
+    height: 1px;
+    background-color: var(--yellow);
+    border: 0;
+}
+
+.lijstklikker {
+    font-size: 0.7em;
+    cursor: pointer;
+}
+
+.stats_sublijst {
+    font-size: 0.8em;
+    width: 100%;
+}
+
+.stats_sublijst_td1, .stats_sublijst_td2 {
+    border: 1px solid white;
+}
+
+.stats_gridcontainer {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: 10px;
+    row-gap: 10px;
+    justify-items: stretch;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+.stats_gridcontainer {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: 10px;
+    row-gap: 10px;
+    justify-items: stretch;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+.stats_griditem_divider {
+    grid-column: span 2;
+    border-bottom: 1px solid var(--orange);
+    height: 1px;
+}
+
+.stats_griditem_links {
+    text-align: right;
+    grid-column: 1/2;
+}
+
+.stats_griditem_rechts {
+    text-align: left;
+    grid-column: 2/3;
+    font-size: 0.9em;
+}
+
+.stats_griditem_breed {
+    grid-column: 1/3;
+}

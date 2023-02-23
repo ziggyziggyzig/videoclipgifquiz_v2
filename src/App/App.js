@@ -15,6 +15,8 @@ import {CurrentUserContext} from "../Contexts/CurrentUser"
 import loadable from '@loadable/component'
 import {HuidigeRondeContext} from "../Contexts/HuidigeRonde"
 import {MessagesContext} from "../Contexts/Messages"
+import {UsersContext} from "../Contexts/Users"
+import Statistieken from "./Statistieken/Statistieken"
 
 const Navigatie = loadable(() => import('./Navigatie/Navigatie'))
 const Speler = loadable(() => import('./Speler/Speler'))
@@ -33,7 +35,8 @@ if (!window.location.href.includes("localhost") && !window.location.href.include
 
 const App = () => {
     const [{currentUserData}, dispatchCurrentUserData] = useContext(CurrentUserContext)
-    const [, dispatchHuidigeRonde] = useContext(HuidigeRondeContext)
+    const [, dispatchUsers] = useContext(UsersContext)
+    const [{huidigeRondeNummer}, dispatchHuidigeRonde] = useContext(HuidigeRondeContext)
     const [, dispatchMessages] = useContext(MessagesContext)
     const [showMessages, setShowMessages] = useState(false)
     const [showMenu, setShowMenu] = useState(false)
@@ -41,6 +44,7 @@ const App = () => {
     const [onthoudPagina, setOnthoudPagina] = useState(false)
     const [toonLoginPagina, setToonLoginPagina] = useState(false)
     const [newUser, setNewUser] = useState(null)
+    const [loadAll, setLoadAll] = useState(false)
 
     const toonMessages = () => {
         setShowUserMenu(false)
@@ -203,6 +207,69 @@ const App = () => {
         }
     }, [])
 
+    useEffect(() => {
+        if (loadAll) {
+            const unsubscribe = onSnapshot(collection(db, "users"), async (users) => {
+                let toContext = []
+                for (let user of users.docs) {
+                    let {
+                        TWITTER_UID_STR,
+                        GOOGLE_UID,
+                        MASTODON_ACCOUNT,
+                        MASTODON_URL,
+                        MASTODON_DISPLAYNAME,
+                        BONUS_COUNT,
+                        DISPLAYNAME,
+                        OWN_ACCOUNT,
+                        TAART_COUNT,
+                        TWITTER_HANDLE,
+                        CORRECT_COUNT,
+                        SERIES_LIST,
+                        WIN_COUNT,
+                        FAST_FIVE,
+                        WIN_LIST,
+                        donateur,
+                        MEDIUM_COUNT,
+                        BRON_COUNT,
+                        CORRECT_FIRST
+                    } = user.data()
+                    if (huidigeRondeNummer && WIN_LIST && WIN_LIST.length > 0) {
+                        let i = WIN_LIST.findIndex(o => o.ronde === huidigeRondeNummer)
+                        if (i > -1) delete WIN_LIST[i].tekst
+                    }
+                    toContext.push({
+                        BONUS_COUNT:BONUS_COUNT || 0,
+                        DISPLAYNAME:DISPLAYNAME,
+                        OWN_ACCOUNT:OWN_ACCOUNT,
+                        TAART_COUNT:TAART_COUNT,
+                        TWITTER_HANDLE:TWITTER_HANDLE,
+                        USER_ID:user.id,
+                        CORRECT_COUNT:CORRECT_COUNT || 0,
+                        SERIES_LIST:SERIES_LIST || [],
+                        WIN_COUNT:WIN_COUNT || 0,
+                        FAST_FIVE:FAST_FIVE || [],
+                        TWITTER:!!TWITTER_UID_STR,
+                        GOOGLE:!!GOOGLE_UID,
+                        MASTODON:!!MASTODON_ACCOUNT,
+                        MASTODON_URL:MASTODON_URL || null,
+                        MASTODON_DISPLAYNAME:MASTODON_DISPLAYNAME || null,
+                        WIN_LIST:WIN_LIST || [],
+                        donateur:donateur || false,
+                        MEDIUM_COUNT:MEDIUM_COUNT || [],
+                        BRON_COUNT:BRON_COUNT || [],
+                        CORRECT_FIRST: CORRECT_FIRST||[]
+                    })
+                }
+                dispatchUsers({type:"SET", usersData:toContext})
+
+            })
+
+            return () => {
+                unsubscribe()
+            }
+        }
+    }, [dispatchUsers, huidigeRondeNummer, loadAll])
+
     return <div className="App">
         <BrowserRouter>
             {/*{currentUserData && (!currentUserData.ALLOW_MESSAGES || currentUserData.ALLOW_MESSAGES!==false) && <Messages/>}*/}
@@ -220,21 +287,21 @@ const App = () => {
                     <Routes>
                         {Array(['/speler', '/speler/:spelerId'].map(path =>
                             <Route key={path} path={path} element={
-                                <Speler/>
+                                <Speler setLoadAll={()=>setLoadAll(true)}/>
                             }/>
                         ))}
-                        <Route path="/steun" element={<Steun/>}/>
-                        <Route path="/meta" element={<Meta/>}/>
-                        {/*<Route path="/statistieken" element={<Statistieken/>}/>*/}
+                        <Route path="/steun" element={<Steun setLoadAll={()=>setLoadAll(true)}/>}/>
+                        <Route path="/meta" element={<Meta setLoadAll={()=>setLoadAll(true)}/>}/>
+                        <Route path="/statistieken" element={<Statistieken setLoadAll={()=>setLoadAll(true)}/>}/>
                         <Route path="/overzichten" element={
-                            <Overzichten/>
+                            <Overzichten setLoadAll={()=>setLoadAll(true)}/>
                         }/>
                         {Array(['/', '/ronde', '/ronde/:rondeId'].map(path =>
                             <Route key={path} path={path} element={
-                                <Quiz/>
+                                <Quiz loadAll={loadAll} setLoadAll={()=>setLoadAll(true)}/>
                             }/>
                         ))}
-                        <Route path="/admin" element={<Admin/>}/>
+                        <Route path="/admin" element={<Admin setLoadAll={()=>setLoadAll(true)}/>}/>
                     </Routes>
                 }
             </div>
