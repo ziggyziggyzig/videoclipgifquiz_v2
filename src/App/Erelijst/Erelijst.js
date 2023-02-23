@@ -3,7 +3,7 @@ import {Fragment, useContext, useEffect, useState} from "react"
 
 import {UsersContext} from "../../Contexts/Users"
 import {Rondelink} from "../Links/Links"
-import {collection, getDocs, where, orderBy, limit, query} from "firebase/firestore"
+import {collection, getDocs, where, orderBy, limit, query, getDoc, doc} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 import {Duration} from "luxon"
 import Loading from "../Loading/Loading"
@@ -18,15 +18,57 @@ const Erelijst = () => {
     const [langsteSerie, setLangsteSerie] = useState(null)
     const [meesteInRonde, setMeesteInRonde] = useState(null)
     const [minsteInRonde, setMinsteInRonde] = useState(null)
-    // const [artiest, setArtiest] = useState(null)
-    // const [jaar, setJaar] = useState(null)
-    // const [decennium, setDecennium] = useState(null)
+    const [artiest, setArtiest] = useState(null)
+    const [artiestCorrects, setArtiestCorrects] = useState(null)
+    const [jaar, setJaar] = useState(null)
+    const [jaarCorrects, setJaarCorrects] = useState(null)
+    const [decennium, setDecennium] = useState(null)
+    const [decenniumCorrects, setDecenniumCorrects] = useState(null)
+    const [globals, setGlobals] = useState(null)
 
     const [{usersData}] = useContext(UsersContext)
-    const [{huidigeRondeNummer}]=useContext(HuidigeRondeContext)
+    const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
 
     useEffect(() => {
         const getData = async () => {
+            let g = await getDoc(doc(db, 'GLOBAL', 'STATS'))
+            setGlobals(g.data())
+
+            let artiesten_toState = []
+            let as = await getDocs(collection(db, 'GLOBAL', 'STATS', 'ARTIESTEN'))
+            for (let ad of as.docs) {
+                let data = ad.data()
+                data.rondes.sort((a, b) => a - b)
+                artiesten_toState.push(data)
+            }
+            artiesten_toState.sort((a, b) => a.count === b.count ? b.corrects - a.corrects : b.count - a.count)
+            setArtiest(artiesten_toState)
+            artiesten_toState.sort((a, b) => a.corrects === b.corrects ? b.count - a.count : b.corrects - a.corrects)
+            setArtiestCorrects(artiesten_toState)
+
+            let jaren_toState = []
+            let decennia_toState = []
+            let js = await getDocs(collection(db, 'GLOBAL', 'STATS', 'JAREN'))
+            for (let jd of js.docs) {
+                jaren_toState.push(jd.data())
+                let decennium = Math.floor(jd.data().jaar / 10) * 10
+                let i = decennia_toState.findIndex(o => o.decennium === decennium)
+                if (i === -1) {
+                    decennia_toState.push({decennium:decennium, corrects:jd.data().corrects, count:1})
+                } else {
+                    decennia_toState[i].corrects += jd.data().corrects
+                    decennia_toState[i].count++
+                }
+            }
+            jaren_toState.sort((a, b) => a.count === b.count ? b.corrects - a.corrects : b.count - a.count)
+            setJaar(jaren_toState)
+            jaren_toState.sort((a, b) => a.corrects === b.corrects ? b.count - a.count : b.corrects - a.corrects)
+            setJaarCorrects(jaren_toState)
+            decennia_toState.sort((a, b) => a.count === b.count ? a.decennium - b.decennium : b.count - a.count)
+            setDecennium(decennia_toState)
+            decennia_toState.sort((a, b) => a.corrects === b.corrects ? a.decennium - b.decennium : b.corrects - a.corrects)
+            setDecenniumCorrects(decennia_toState)
+
             if (usersData && usersData.length > 0) {
                 const tel_winsten = usersData.map(a => a.WIN_COUNT)
                 const meeste_winsten = Math.max(...tel_winsten)
@@ -127,7 +169,33 @@ const Erelijst = () => {
     }, [usersData, huidigeRondeNummer])
 
     return <div className="erelijst_content font_sans_normal">
-        <h3>De erelijst</h3>
+        <h3>De cijfers</h3>
+        {globals && artiest && artiest.length > 0 && huidigeRondeNummer ? <>
+            <p>
+                <b>Aantal gespeelde rondes</b>: {huidigeRondeNummer}
+            </p>
+            <p>
+                <b>Aantal gemaakte
+                    fragmenten</b>: {huidigeRondeNummer + (Math.floor(huidigeRondeNummer / 100) * 4)}<br/>
+                <b>Aantal fragmenten nog niet gebruikt</b>: {globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
+                <b>waarvan ingepland</b>:{globals.CLIP_PLANNED}
+            </p>
+            <p>
+                <b>Aantal spelers</b>: {usersData.length}<br/>
+                <b>Aantal verschillende
+                    rondewinnaars</b>: {globals.WINNERS_COUNT} ({Math.round(globals.WINNERS_COUNT / usersData.length * 100)}%)
+            </p>
+            <p>
+                <b>Totaal aantal correcte antwoorden</b>: {globals.CORRECT_COUNT}<br/>
+                <b>Gemiddeld aantal antwoorden per speler</b>: {globals.CORRECT_AVG_SPELER}<br/>
+                <b>Gemiddeld aantal antwoorden per ronde</b>: {globals.CORRECT_AVG_RONDE}
+            </p>
+            <p>
+                <b>Aantal verschillende artiesten</b>: {artiest.length}
+            </p>
+            <hr/>
+        </> : <Loading/>
+        }
         {meesteWinsten && meesteWinsten.length > 0 ? <>
             <h4>Speler{meesteWinsten.length > 1 && 's'} met de meeste winsten</h4>
             <p>
@@ -213,6 +281,78 @@ const Erelijst = () => {
                         )}
                     </>
                 }
+            </p>
+            <hr/>
+        </> : <Loading/>}
+        {artiest && artiest.length > 0 && artiestCorrects && artiestCorrects.length > 0 ? <>
+            <h4>Vaakste gevraagde artiest(en)</h4>
+            <p>
+                <i>{artiest[0].count} rondes:</i><br/>
+                {artiest.map(a =>
+                        a.count === artiest[0].count && <Fragment key={a.artiest}>{a.artiest} (rondes{' '}
+                            {a.rondes.map((r, i) =>
+                                <Fragment key={r * i}>
+                                    <Rondelink ronde={r} inhoud={false}/>
+                                    {i < a.rondes.length - 1 && <>{', '}</>}
+                                </Fragment>
+                            )}
+                            )<br/>
+                        </Fragment>
+                )}
+            </p>
+            <h4>Best beantwoorde artiest(en)</h4>
+            <p>
+                <i>{artiest[0].corrects} antwoorden:</i><br/>
+                {artiest.map(a =>
+                        a.corrects === artiest[0].corrects && <Fragment key={a.artiest}>{a.artiest} (rondes{' '}
+                            {a.rondes.map((r, i) =>
+                                <Fragment key={r * i}>
+                                    <Rondelink ronde={r} inhoud={false}/>
+                                    {i < a.rondes.length - 1 && <>{', '}</>}
+                                </Fragment>
+                            )}
+                            )<br/>
+                        </Fragment>
+                )}
+            </p>
+            <hr/>
+        </> : <Loading/>}
+        {jaar && jaar.length > 0 && jaarCorrects && jaarCorrects.length > 0 ? <>
+            <h4>Vaakste gevraagde jaartal(len)</h4>
+            <p>
+                <i>{jaar[0].count} rondes:</i><br/>
+                {jaar.map(a =>
+                        a.count === jaar[0].count && <Fragment key={a.jaar}>{a.jaar}<br/>
+                        </Fragment>
+                )}
+            </p>
+            <h4>Best beantwoorde jaartal(len)</h4>
+            <p>
+                <i>{jaarCorrects[0].corrects} antwoorden:</i><br/>
+                {jaarCorrects.map(a =>
+                        a.corrects === jaarCorrects[0].corrects && <Fragment key={a.jaar}>{a.jaar}<br/>
+                        </Fragment>
+                )}
+            </p>
+            <hr/>
+        </> : <Loading/>}
+        {decennium && decennium.length > 0 && decenniumCorrects && decenniumCorrects.length > 0 ? <>
+            <h4>Vaakste gevraagde decennium(/a)</h4>
+            <p>
+                <i>{decennium[0].count} rondes:</i><br/>
+                {decennium.map(a =>
+                        a.count === decennium[0].count && <Fragment key={a.decennium}>{a.decennium}-{a.decennium + 9}<br/>
+                        </Fragment>
+                )}
+            </p>
+            <h4>Best beantwoorde decennium(/a)</h4>
+            <p>
+                <i>{decenniumCorrects[0].corrects} antwoorden:</i><br/>
+                {decenniumCorrects.map(a =>
+                    a.corrects === decenniumCorrects[0].corrects &&
+                    <Fragment key={a.decennium}>{a.decennium}-{a.decennium + 9}<br/>
+                    </Fragment>
+                )}
             </p>
             <hr/>
         </> : <Loading/>}

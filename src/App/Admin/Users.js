@@ -1,6 +1,6 @@
 import {Fragment, useEffect, useState} from "react"
 
-import {collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, where} from "firebase/firestore"
+import {collection, doc, getDocs, updateDoc, setDoc, deleteDoc, query, where, deleteField} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 
 const Users = () => {
@@ -117,8 +117,18 @@ const MergeUsers = ({users, done}) => {
             TWITTER_HANDLE:users[order[0]].TWITTER_HANDLE || users[order[1]].TWITTER_HANDLE || null,
             TWITTER_PHOTOURL:users[order[0]].TWITTER_PHOTOURL || users[order[1]].TWITTER_PHOTOURL || null,
             TWITTER_UID:users[order[0]].TWITTER_UID || users[order[1]].TWITTER_UID || null,
-            TWITTER_UID_STR:users[order[0]].TWITTER_UID_STR || users[order[1]].TWITTER_UID_STR || null
-
+            TWITTER_UID_STR:users[order[0]].TWITTER_UID_STR || users[order[1]].TWITTER_UID_STR || null,
+            ATTEMPT_FIRST:deleteField(),
+            BONUS_LIST:deleteField(),
+            BRON_COUNT:deleteField(),
+            CORRECT_FIRST:deleteField(),
+            CORRECT_LAST:deleteField(),
+            FAST_FIVE:deleteField(),
+            MEDIUM_COUNT:deleteField(),
+            SERIES_LIST:deleteField(),
+            SLOW_FIVE:deleteField(),
+            WIN_LIST:deleteField(),
+            YEARS_LIST:deleteField()
         })
     }, [users, order])
 
