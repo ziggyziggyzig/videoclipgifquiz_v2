@@ -14,8 +14,9 @@ const Statistieken = ({setLoadAll}) => {
     const [{usersData}] = useContext(UsersContext)
     const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
 
+    const [globals, setGlobals] = useState(null)
+
     const [alleRondes, setAlleRondes] = useState([])
-    const [alleClips, setAlleClips] = useState([])
 
     const [spelersEerste, setSpelersEerste] = useState([])
     const [spelersMeesteAntwoorden, setSpelersMeesteAntwoorden] = useState([])
@@ -28,10 +29,16 @@ const Statistieken = ({setLoadAll}) => {
     const [inzendingenSnelste, setInzendingenSnelste] = useState([])
     const [valreep, setValreep] = useState([])
     const [langsteSeries, setLangsteSeries] = useState([])
-    const [mediums, setMediums] = useState([])
     const [bronnen, setBronnen] = useState([])
+    const [mediums, setMediums] = useState([])
 
-    const [globals, setGlobals] = useState(null)
+    const [artiestenMeesteRondes, setArtiestenMeesteRondes] = useState([])
+    const [artiestenMeesteAntwoorden, setArtiestenMeesteAntwoorden] = useState([])
+    const [jarenMeesteRondes, setJarenMeesteRondes] = useState([])
+    const [jarenMeesteAntwoorden, setJarenMeesteAntwoorden] = useState([])
+    const [jarenOudste, setJarenOudste] = useState([])
+    const [decenniaMeesteRondes, setDecenniaMeesteRondes] = useState([])
+    const [decenniaMeesteAntwoorden, setDecenniaMeesteAntwoorden] = useState([])
 
     useEffect(() => {
         setLoadAll()
@@ -88,7 +95,6 @@ const Statistieken = ({setLoadAll}) => {
             for (let d of cs.docs) {
                 clipsToState.push({ID:d.id, ...d.data()})
             }
-            setAlleClips(clipsToState)
 
             let rondesToState = []
             let rs = await getDocs(
@@ -99,7 +105,7 @@ const Statistieken = ({setLoadAll}) => {
             )
             for (let d of rs.docs) {
                 let clipIndex = d.data().clip ? clipsToState.findIndex(o => o.id === d.data().clip) : null
-                if (clipIndex) {
+                if (clipsToState[clipIndex].jaar !== 0 && clipIndex) {
                     rondesToState.push({
                         artiest:clipsToState[clipIndex].artiest,
                         titel:clipsToState[clipIndex].titel,
@@ -127,34 +133,39 @@ const Statistieken = ({setLoadAll}) => {
                 let v = r.TIMESTAMP_END - r.CORRECT_LAST.timestamp
                 if (!(v === 1 && r.ronde === 122) && !(v === 1 && r.ronde === 127)) valreepToState.push({valreep:v, ...r.CORRECT_LAST})
 
-                Object.entries(r.BRON_COUNT).map(i => {
-                    let [b, c] = i
-                    let bi = bronToState.findIndex(o => o.bron === b)
-                    if (bi > -1) {
-                        bronToState[bi].count += c
-                    } else {
-                        bronToState.push({bron:b, count:c})
-                    }
-                    return true
-                })
+                if (r.BRON_COUNT) {
+                    Object.entries(r.BRON_COUNT).map(i => {
+                        let [b, c] = i
+                        let bi = bronToState.findIndex(o => o.bron === b)
+                        if (bi > -1) {
+                            bronToState[bi].count += c
+                        } else {
+                            bronToState.push({bron:b, count:c})
+                        }
+                        return true
+                    })
+                }
 
-                Object.entries(r.MEDIUM_COUNT).map(i => {
-                    let [m, c] = i
-                    let mi = mediumToState.findIndex(o => o.medium === m)
-                    if (mi > -1) {
-                        mediumToState[mi].count += c
-                    } else {
-                        mediumToState.push({medium:m, count:c})
-                    }
-                    return true
-                })
+                if (r.MEDIUM_COUNT) {
+                    Object.entries(r.MEDIUM_COUNT).map(i => {
+                        let [m, c] = i
+                        let mi = mediumToState.findIndex(o => o.medium === m)
+                        if (mi > -1) {
+                            mediumToState[mi].count += c
+                        } else {
+                            mediumToState.push({medium:m, count:c})
+                        }
+                        return true
+                    })
+                }
             }
+
+            setBronnen(bronToState.sort((a, b) => b.count - a.count))
+            setMediums(mediumToState.sort((a, b) => b.count - a.count))
 
             valreepToState.sort((a, b) => a.valreep - b.valreep)
             setValreep(valreepToState.slice(0, 10))
 
-            setBronnen(bronToState.sort((a, b) => b.count - a.count))
-            setMediums(mediumToState.sort((a, b) => b.count - a.count))
         }
 
         alleRondes && alleRondes.length > 0 && parseRondes()
@@ -179,6 +190,43 @@ const Statistieken = ({setLoadAll}) => {
         }
         inzendingen_snelste()
     }, [])
+
+    useEffect(() => {
+        const loadArtiestenEnJaren = async () => {
+            let artiestenToState = []
+            let as = await getDocs(
+                collection(db, 'GLOBAL', 'STATS', 'ARTIESTEN')
+            )
+            for (let d of as.docs) {
+                artiestenToState.push(d.data())
+            }
+            setArtiestenMeesteRondes([...artiestenToState].sort((a, b) => a.count === b.count ? b.corrects - a.corrects : b.count - a.count).slice(0, 20))
+            setArtiestenMeesteAntwoorden([...artiestenToState].sort((a, b) => a.corrects === b.corrects ? b.count - a.count : b.corrects - a.corrects).slice(0, 20))
+
+            let jarenToState = []
+            let decenniaToState = []
+            let aj = await getDocs(
+                collection(db, 'GLOBAL', 'STATS', 'JAREN')
+            )
+            for (let d of aj.docs) {
+                jarenToState.push(d.data())
+                let decennium = Math.floor(d.data().jaar / 10) * 10
+                let di = decenniaToState.findIndex(o => o.decennium === decennium)
+                if (di > -1) {
+                    decenniaToState.count += d.data().count
+                    decenniaToState.corrects += d.data().corrects
+                } else {
+                    decenniaToState.push({decennium:decennium, corrects:d.data().corrects, count:d.data().count})
+                }
+            }
+            setJarenMeesteRondes([...jarenToState].sort((a, b) => a.count === b.count ? b.corrects - a.corrects : b.count - a.count).slice(0, 20))
+            setJarenMeesteAntwoorden([...jarenToState].sort((a, b) => a.corrects === b.corrects ? b.count - a.count : b.corrects - a.corrects).slice(0, 20))
+            setJarenOudste([...alleRondes].sort((a, b) => a.jaar === b.jaar ? a.ronde - b.ronde : a.jaar - b.jaar).slice(0, 20))
+            setDecenniaMeesteRondes([...decenniaToState].sort((a, b) => a.count === b.count ? b.corrects - a.corrects : b.count - a.count))
+            setDecenniaMeesteAntwoorden([...decenniaToState].sort((a, b) => a.corrects === b.corrects ? b.count - a.count : b.corrects - a.corrects))
+        }
+        loadArtiestenEnJaren()
+    }, [alleRondes])
 
     return <div className="statistieken">
         <h2 className="font_sans_normal">Statistieken</h2>
@@ -217,7 +265,8 @@ const Statistieken = ({setLoadAll}) => {
             </Links>
             <Rechts>
                 {globals && globals.WINNERS_COUNT && <>
-                    {globals.WINNERS_COUNT} ({Math.round(globals.WINNERS_COUNT / usersData.length * 100)}%)
+                    {globals.WINNERS_COUNT} ({Math.round(globals.WINNERS_COUNT / usersData.length * 100)}% van alle
+                    spelers)
                 </>}
             </Rechts>
             <Links>
@@ -387,7 +436,7 @@ const Statistieken = ({setLoadAll}) => {
                 gebruikte antwoordmethodes
             </Links>
             <Rechts>
-                {bronnen && bronnen.length > 0 ?
+                {bronnen && bronnen.length > 0 && globals.CORRECT_COUNT ?
                     bronnen.map((s) =>
                         <Fragment key={s.bron}>
                             {padLeadingZeros(s.count, 6)}x{' '}
@@ -402,7 +451,7 @@ const Statistieken = ({setLoadAll}) => {
                 gebruikte kanalen
             </Links>
             <Rechts>
-                {mediums && mediums.length > 0 ?
+                {mediums && mediums.length > 0 && globals.CORRECT_COUNT ?
                     mediums.map((s) =>
                         <Fragment key={s.medium}>
                             {padLeadingZeros(s.count, 6)}x{' '}
@@ -413,61 +462,111 @@ const Statistieken = ({setLoadAll}) => {
                     :
                     <Loading/>}
             </Rechts>
-            {/*<Breed>*/}
-            {/*    <h3>Artiesten</h3>*/}
-            {/*</Breed>*/}
-            {/*<Links>*/}
-            {/*    vaakst gevraagde artiesten*/}
-            {/*</Links>*/}
-            {/*<Rechts>*/}
-
-            {/*</Rechts>*/}
-            {/*<Links>*/}
-            {/*    artiesten met de meeste juiste antwoorden*/}
-            {/*</Links>*/}
-            {/*<Rechts>*/}
-
-            {/*</Rechts>*/}
-            {/*<Breed>*/}
-            {/*    <h3>Jaartallen</h3>*/}
-            {/*</Breed>*/}
-            {/*<Links>*/}
-            {/*    vaakst gevraagde jaartallen*/}
-            {/*</Links>*/}
-            {/*<Rechts>*/}
-
-            {/*</Rechts>*/}
-            {/*<Links>*/}
-            {/*    jaartallen met de meeste juiste antwoorden*/}
-            {/*</Links>*/}
-            {/*<Rechts>*/}
-
-            {/*</Rechts>*/}
-            {/*<Links>*/}
-            {/*    oudste gevraagde nummers*/}
-            {/*</Links>*/}
-            {/*<Rechts>*/}
-
-            {/*</Rechts>*/}
-            {/*<Breed>*/}
-            {/*    <h3>Decennia</h3>*/}
-            {/*</Breed>*/}
-            {/*<Links>*/}
-            {/*    vaakst gevraagde decennia*/}
-            {/*</Links>*/}
-            {/*<Rechts>*/}
-
-            {/*</Rechts>*/}
-            {/*<Links>*/}
-            {/*    decennia met de meeste juiste antwoorden*/}
-            {/*</Links>*/}
-            {/*<Rechts>*/}
-
-            {/*</Rechts>*/}
-            <Lijn/>
             <Breed>
-                <i>(binnenkort nog meer statistieken)</i>
+                <h3>Artiesten</h3>
             </Breed>
+            <Links>
+                vaakst gevraagde artiesten
+            </Links>
+            <Rechts>
+                {artiestenMeesteRondes && artiestenMeesteRondes.length > 0 ?
+                    artiestenMeesteRondes.map((s, i) =>
+                        (i < 10 || s.count === artiestenMeesteRondes[9].count) &&
+                        <Fragment key={s.artiest}>
+                            {padLeadingZeros(s.count, 4)}x &mdash; {s.artiest}
+                            <br/>
+                        </Fragment>)
+                    :
+                    <Loading/>}
+            </Rechts>
+            <Links>
+                artiesten met de meeste juiste antwoorden
+            </Links>
+            <Rechts>
+                {artiestenMeesteAntwoorden && artiestenMeesteAntwoorden.length > 0 ?
+                    artiestenMeesteAntwoorden.map((s, i) =>
+                        (i < 10 || s.corrects === artiestenMeesteAntwoorden[9].corrects) &&
+                        <Fragment key={s.artiest}>
+                            {padLeadingZeros(s.corrects, 4)}x &mdash; {s.artiest}
+                            <br/>
+                        </Fragment>)
+                    :
+                    <Loading/>}
+            </Rechts>
+            <Breed>
+                <h3>Jaartallen</h3>
+            </Breed>
+            <Links>
+                vaakst gevraagde jaartallen
+            </Links>
+            <Rechts>
+                {jarenMeesteRondes && jarenMeesteRondes.length > 0 ?
+                    jarenMeesteRondes.map((s, i) =>
+                        (i < 10 || s.count === jarenMeesteRondes[9].count) &&
+                        <Fragment key={s.jaar}>
+                            {padLeadingZeros(s.count, 4)}x &mdash; {s.jaar}
+                            <br/>
+                        </Fragment>)
+                    :
+                    <Loading/>}
+            </Rechts>
+            <Links>
+                jaartallen met de meeste juiste antwoorden
+            </Links>
+            <Rechts>
+                {jarenMeesteAntwoorden && jarenMeesteAntwoorden.length > 0 ?
+                    jarenMeesteAntwoorden.map((s, i) =>
+                        (i < 10 || s.corrects === jarenMeesteAntwoorden[9].corrects) &&
+                        <Fragment key={s.jaar}>
+                            {padLeadingZeros(s.corrects, 4)}x &mdash; {s.jaar}
+                            <br/>
+                        </Fragment>)
+                    :
+                    <Loading/>}
+            </Rechts>
+            <Links>
+                oudste gevraagde nummers
+            </Links>
+            <Rechts>
+                {jarenOudste && jarenOudste.length > 0 ?
+                    jarenOudste.map((s, i) =>
+                        (i < 10 || s.jaar === jarenOudste[9].jaar) &&
+                        <Fragment key={s.jaar}>
+                            {s.jaar}: <Rondelink ronde={s.ronde} inhoud={true} text="ronde"/>
+                            <br/>
+                        </Fragment>)
+                    :
+                    <Loading/>}
+            </Rechts>
+            <Breed>
+                <h3>Decennia</h3>
+            </Breed>
+            <Links>
+                vaakst gevraagde decennia
+            </Links>
+            <Rechts>
+                {decenniaMeesteRondes && decenniaMeesteRondes.length > 0 ?
+                    decenniaMeesteRondes.map((s, i) =>
+                        <Fragment key={`${s.decennium}${s.decennium + 9}`}>
+                            {padLeadingZeros(s.count, 4)}x &mdash; {s.decennium}-{s.decennium + 9}
+                            <br/>
+                        </Fragment>)
+                    :
+                    <Loading/>}
+            </Rechts>
+            <Links>
+                decennia met de meeste juiste antwoorden
+            </Links>
+            <Rechts>
+                {decenniaMeesteAntwoorden && decenniaMeesteAntwoorden.length > 0 ?
+                    decenniaMeesteAntwoorden.map((s, i) =>
+                        <Fragment key={`${s.decennium}${s.decennium + 9}`}>
+                            {padLeadingZeros(s.corrects, 4)}x &mdash; {s.decennium}-{s.decennium + 9}
+                            <br/>
+                        </Fragment>)
+                    :
+                    <Loading/>}
+            </Rechts>
         </div>
     </div>
 }
@@ -477,7 +576,7 @@ const Links = ({list, children}) => <div
 const Rechts = ({list, children}) => <div
     className={`stats_griditem_rechts font_mono_normal ${list || undefined}`}>{children}</div>
 
-const Lijn = ({list}) => <div className={`stats_griditem_divider ${list || undefined}`}/>
+// const Lijn = ({list}) => <div className={`stats_griditem_divider ${list || undefined}`}/>
 
 export const Breed = ({id, className, style, children}) => <>
     <div

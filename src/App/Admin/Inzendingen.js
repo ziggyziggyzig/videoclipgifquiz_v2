@@ -47,8 +47,17 @@ const Inzendingen = () => {
                 let toState = []
                 for (let d of snapshot.docs) {
                     let user = usersData.find(o => o.USER_ID === d.data().USER_ID)
-                    toState.push({userData:user, DOC_ID:d.id, ...d.data()})
-
+                    let check_dubbel = toState.findIndex(o =>
+                        o.USER_ID === d.data().USER_ID &&
+                        o.beoordeling === 3 &&
+                        d.data().beoordeling === 3 &&
+                        o.ronde === d.data().ronde
+                    )
+                    if (check_dubbel === -1) toState.push({userData:user, DOC_ID:d.id, ...d.data()})
+                    else {
+                        toState[check_dubbel] = {dubbel:true, ...toState[check_dubbel]}
+                        toState.push({userData:user, DOC_ID:d.id, dubbel:true, ...d.data()})
+                    }
                 }
                 setInzendingen(toState)
             })
@@ -57,7 +66,17 @@ const Inzendingen = () => {
                 let toState = []
                 for (let d of snapshot.docs) {
                     let user = usersData.find(o => o.USER_ID === d.data().USER_ID)
-                    toState.push({userData:user, DOC_ID:d.id, ...d.data()})
+                    let check_dubbel = toState.findIndex(o =>
+                        o.USER_ID === d.data().USER_ID &&
+                        o.beoordeling === 3 &&
+                        d.data().beoordeling === 3 &&
+                        o.ronde === d.data().ronde
+                    )
+                    if (check_dubbel === -1) toState.push({userData:user, DOC_ID:d.id, ...d.data()})
+                    else {
+                        toState[check_dubbel] = {dubbel:true, ...toState[check_dubbel]}
+                        toState.push({userData:user, DOC_ID:d.id, dubbel:true, ...d.data()})
+                    }
 
                 }
                 setInzendingen(toState)
@@ -97,7 +116,17 @@ const Inzendingen = () => {
                 >
                     <td>
                         <input type="button"
-                               style={{backgroundColor:i.beoordeling === 3 ? 'lime' : i.beoordeling === 0 ? 'orangered' : 'yellow'}}
+                               style={{
+                                   backgroundColor:i.dubbel ?
+                                       'black' :
+                                       (i.beoordeling === 3 ?
+                                               'lime' :
+                                               (i.beoordeling === 0 ?
+                                                       'orangered' :
+                                                       'gold'
+                                               )
+                                       )
+                               }}
                                onClick={i.beoordeling === 3 ? () => afkeuren(i) : () => goedkeuren(i)} value={' '}
                         />
                     </td>
