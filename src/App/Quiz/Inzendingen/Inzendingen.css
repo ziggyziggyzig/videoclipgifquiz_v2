@@ -22,6 +22,14 @@
     .inzendingen_datum_kort {
         display: inline-block;
     }
+
+    .inzending_medium {
+        display:none;
+    }
+
+    .inzending_medium_span {
+        display: inline;
+    }
 }
 
 @media screen and (min-width: 641px) and (max-width: 1024px) {
@@ -34,6 +42,14 @@
     }
 
     .inzendingen_datum_kort {
+        display: none;
+    }
+
+    .inzending_medium {
+        display:table-cell;
+    }
+
+    .inzending_medium_span {
         display: none;
     }
 }
@@ -49,6 +65,14 @@
 
     .inzendingen_datum_kort {
         display: inline-block;
+    }
+
+    .inzending_medium {
+        display:table-cell;
+    }
+
+    .inzending_medium_span {
+        display: none;
     }
 }
 

@@ -38,7 +38,7 @@ const Inzendingen = () => {
                         <thead>
                         <tr>
                             <td style={{textAlign:'right'}}>naam</td>
-                            <td/>
+                            <td className="inzending_medium"/>
                             <td/>
                             <td style={{textAlign:'right'}}>tijdstip</td>
                         </tr>
@@ -99,15 +99,15 @@ const Inzending = ({inzending}) => {
         <tr key={inzending.id} className={showDetails ? 'inzendingen_details' : undefined}>
             <td style={{textAlign:'right'}}><Spelerlink user_id={user.USER_ID} prijzen={false}
                                                         eigenLink={eigenInzending}/></td>
-            <td>{inzending.medium === 'twitter' &&
+            <td className="inzending_medium">{inzending.medium === 'twitter' &&
                 <i className="fab fa-twitter inzendingen_provider inzendingen_doorklikker geel"
                    onClick={() => window.open(`https://twitter.com/${user.TWITTER_HANDLE}`)}/>}
                 {inzending.medium === 'google' && <i className="fab fa-google inzendingen_provider geel"/>}
                 {inzending.medium === 'mastodon' && (user.MASTODON_URL ?
-                    <i className="fab fa-mastodon inzendingen_provider inzendingen_doorklikker geel"
-                       onClick={() => window.open(`${user.MASTODON_URL}`)}/>
-                    :
-                    <i className="fab fa-mastodon inzendingen_provider geel"/>
+                        <i className="fab fa-mastodon inzendingen_provider inzendingen_doorklikker geel"
+                           onClick={() => window.open(`${user.MASTODON_URL}`)}/>
+                        :
+                        <i className="fab fa-mastodon inzendingen_provider geel"/>
                 )
                 }
             </td>
@@ -136,8 +136,22 @@ const Inzending = ({inzending}) => {
                     {inzending.bron === "website" ?
                         <><i className="fa-regular fa-keyboard" style={{fontSize:'0.8em'}}/> via website</> :
                         <><i className="fa-regular fa-comment" style={{fontSize:'0.8em'}}/> via direct message</>}
+                    <span className="inzending_medium_span">{' '}
+                        {inzending.medium === 'twitter' &&
+                            <i className="fab fa-twitter inzendingen_provider inzendingen_doorklikker geel"
+                               onClick={() => window.open(`https://twitter.com/${user.TWITTER_HANDLE}`)}/>}
+                        {inzending.medium === 'google' && <i className="fab fa-google inzendingen_provider geel"/>}
+                        {inzending.medium === 'mastodon' && (user.MASTODON_URL ?
+                                <i className="fab fa-mastodon inzendingen_provider inzendingen_doorklikker geel"
+                                   onClick={() => window.open(`${user.MASTODON_URL}`)}/>
+                                :
+                                <i className="fab fa-mastodon inzendingen_provider geel"/>
+                        )
+                        }
+                    </span>
                 </td>
-                <td colSpan={3} style={{textAlign:'right'}}>
+                <td className="inzending_medium"/>
+                <td colSpan={2} style={{textAlign:'right'}}>
                     <div>
                         {moment.unix(Math.floor(inzending.timestamp / 1000)).format(datumFormaat.l)}
                         <span style={{fontSize:'0.6em'}}>
