@@ -196,11 +196,13 @@ const Statistieken = ({setLoadAll}) => {
                 aantal gemaakte clipfragmenten:
             </Links>
             <Rechts>
-                {huidigeRondeNummer + (Math.floor(huidigeRondeNummer / 100) * 4) + globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
-                <i>waarvan nog niet gebruikt</i>: {globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
-                <i>waarvan ingepland</i>:{globals.CLIP_PLANNED}
+                {huidigeRondeNummer && globals && globals.CLIP_PLANNED && globals.CLIP_UNPLANNED && <>
+                    {huidigeRondeNummer + (Math.floor(huidigeRondeNummer / 100) * 4) + globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
+                    <i>waarvan nog niet gebruikt</i>: {globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
+                    <i>waarvan ingepland</i>:{globals.CLIP_PLANNED}
+                </>
+                }
             </Rechts>
-
             <Breed>
                 <h3>Spelers</h3>
             </Breed>
@@ -208,13 +210,15 @@ const Statistieken = ({setLoadAll}) => {
                 aantal spelers
             </Links>
             <Rechts>
-                {usersData.length}
+                {usersData && usersData.length > 0 && usersData.length}
             </Rechts>
             <Links>
                 aantal verschillende rondewinnaars
             </Links>
             <Rechts>
-                {globals.WINNERS_COUNT} ({Math.round(globals.WINNERS_COUNT / usersData.length * 100)}%)
+                {globals && globals.WINNERS_COUNT && <>
+                    {globals.WINNERS_COUNT} ({Math.round(globals.WINNERS_COUNT / usersData.length * 100)}%)
+                </>}
             </Rechts>
             <Links>
                 eerste spelers
@@ -321,9 +325,11 @@ const Statistieken = ({setLoadAll}) => {
                 totaal aantal correcte antwoorden
             </Links>
             <Rechts>
-                {globals.CORRECT_COUNT}<br/>
-                <i>(gemiddeld {globals.CORRECT_AVG_SPELER} per speler, <br/>
-                gemiddeld {globals.CORRECT_AVG_RONDE} per ronde)</i>
+                {globals && globals.CORRECT_COUNT && globals.CORRECT_AVG_RONDE && globals.CORRECT_AVG_SPELER && <>
+                    {globals.CORRECT_COUNT}<br/>
+                    <i>(gemiddeld {globals.CORRECT_AVG_SPELER} per speler, <br/>
+                        gemiddeld {globals.CORRECT_AVG_RONDE} per ronde)</i>
+                </>}
             </Rechts>
             <Links>
                 snelste antwoorden
