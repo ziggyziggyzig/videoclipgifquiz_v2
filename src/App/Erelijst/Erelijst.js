@@ -8,6 +8,7 @@ import {db} from "../../Firebase/Firebase"
 import {Duration} from "luxon"
 import Loading from "../Loading/Loading"
 import {HuidigeRondeContext} from "../../Contexts/HuidigeRonde"
+import {Link} from "react-router-dom"
 
 const Erelijst = () => {
     const [meesteWinsten, setMeesteWinsten] = useState(null)
@@ -178,7 +179,7 @@ const Erelijst = () => {
                 <b>Aantal gemaakte
                     fragmenten</b>: {huidigeRondeNummer + (Math.floor(huidigeRondeNummer / 100) * 4) + globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
                 <b>Aantal fragmenten nog niet gebruikt</b>: {globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
-                <b>waarvan ingepland</b>:{globals.CLIP_PLANNED}
+                <b>waarvan ingepland</b>: {globals.CLIP_PLANNED}
             </p>
             <p>
                 <b>Aantal spelers</b>: {usersData.length}<br/>
@@ -356,7 +357,7 @@ const Erelijst = () => {
             </p>
             <hr/>
         </> : <Loading/>}
-        <p><i>volledige statistieken komen binnenkort weer beschikbaar</i></p>
+        <p><i><Link to='/statistieken'>klik hier</Link> voor meer statistieken</i></p>
     </div>
 }
 

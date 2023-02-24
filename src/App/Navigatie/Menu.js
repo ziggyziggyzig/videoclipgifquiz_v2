@@ -65,7 +65,8 @@ const Menu = ({showMenu}) => {
                         <hr/>
                     </td>
                 </tr>
-                <tr className="navigatie_imitatie_link_disabled">
+                <tr className="navigatie_imitatie_link"
+                    onClick={() => window.location = `/statistieken`}>
                     <td>
                         statistieken
                     </td>
