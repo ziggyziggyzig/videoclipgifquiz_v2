@@ -44,7 +44,7 @@ table {
     font-size: 0.8em;
 }
 
-button,input {
+button, input {
     color: var(--yellow);
     font-size: 1em;
     border: 1px solid var(--blue);
@@ -73,6 +73,7 @@ button,input {
     .admin_inzendingen_datum_lang {
         display: none;
     }
+
     .admin_inzendingen_datum_kort {
         display: table-cell;
     }
@@ -82,7 +83,21 @@ button,input {
     .admin_inzendingen_datum_kort {
         display: none;
     }
+
     .admin_inzendingen_datum_lang {
         display: table-cell;
     }
+}
+
+.admin_cycle_tabel td {
+    padding: 2px;
+    text-align: center;
+}
+
+.admin_cycle_tabel td:first-child {
+    width: 50%;
+}
+
+.admin_cycle_tabel i {
+    color: greenyellow;
 }
