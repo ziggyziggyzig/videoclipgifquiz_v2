@@ -30,6 +30,7 @@ const functions = getFunctions(app)
 const adminFunctions = httpsCallable(functions, 'admin')
 // const antwoordVanWebsite = httpsCallable(functions, 'antwoord_van_website')
 const antwoordVanWebsite_v2 = httpsCallable(functions, 'antwoord_van_website_v2')
+const siteActions=httpsCallable(functions,'site_actions')
 const zoekTwitterNaam = httpsCallable(functions, 'zoek_twitter_naam')
 
 export {
@@ -43,5 +44,6 @@ export {
     twitterProvider,
     adminFunctions,
     antwoordVanWebsite_v2,
+    siteActions,
     zoekTwitterNaam
 }

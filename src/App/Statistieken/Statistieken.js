@@ -7,12 +7,14 @@ import Loading from "../Loading/Loading"
 import {padLeadingZeros} from "../../functions/strings"
 import {HuidigeRondeContext} from "../../Contexts/HuidigeRonde"
 import {collection, doc, getDoc, getDocs, limit, orderBy, query, where} from "firebase/firestore"
-import {db} from "../../Firebase/Firebase"
+import {db, siteActions} from "../../Firebase/Firebase"
 import {Duration} from "luxon"
+import {CurrentUserContext} from "../../Contexts/CurrentUser"
 
 const Statistieken = ({setLoadAll}) => {
     const [{usersData}] = useContext(UsersContext)
     const [{huidigeRondeNummer}] = useContext(HuidigeRondeContext)
+    const [{currentUserData}] = useContext(CurrentUserContext)
 
     const [globals, setGlobals] = useState(null)
 
@@ -39,6 +41,8 @@ const Statistieken = ({setLoadAll}) => {
     const [jarenOudste, setJarenOudste] = useState([])
     const [decenniaMeesteRondes, setDecenniaMeesteRondes] = useState([])
     const [decenniaMeesteAntwoorden, setDecenniaMeesteAntwoorden] = useState([])
+
+    const [hannekevsrichard, setHannekevsrichard] = useState([])
 
     useEffect(() => {
         setLoadAll()
@@ -228,9 +232,60 @@ const Statistieken = ({setLoadAll}) => {
         loadArtiestenEnJaren()
     }, [alleRondes])
 
+    useEffect(() => {
+        const getData = async () => {
+            let {data} = await siteActions({
+                context:'stats',
+                action:'hanneke_vs_richard',
+                content:{},
+                user:currentUserData.USER_ID
+            })
+            let vs = []
+            for (let d of data) {
+                let i = vs.findIndex(o => o.USER_ID === d.USER_ID)
+                if (i === -1) {
+                    vs.push({USER_ID:d.USER_ID, count:1})
+                } else {
+                    vs[i].count++
+                }
+            }
+            vs.sort((a, b) => b.count - a.count)
+            setHannekevsrichard(vs)
+        }
+
+        if (currentUserData && currentUserData.USER_ID && (
+            currentUserData.USER_ID === 'Qt1Ra4sGHrTHvgsJg9e7' ||
+            currentUserData.USER_ID === 'w5fMGkOkwDFh3s45JtvA' ||
+            currentUserData.USER_ID === 'X3aLMnQhXuxrl6Xhi1fX'
+        )
+        ) {
+            getData()
+        }
+    }, [currentUserData])
+
     return <div className="statistieken">
         <h2 className="font_sans_normal">Statistieken</h2>
         <div className="stats_gridcontainer">
+            {currentUserData && currentUserData.USER_ID && (
+                currentUserData.USER_ID === 'Qt1Ra4sGHrTHvgsJg9e7' ||
+                currentUserData.USER_ID === 'w5fMGkOkwDFh3s45JtvA' ||
+                currentUserData.USER_ID === 'X3aLMnQhXuxrl6Xhi1fX'
+            ) && <>
+                <Links>onderling duel</Links>
+                <Rechts>{
+                    hannekevsrichard && hannekevsrichard.length > 0 ? hannekevsrichard.map(n =>
+                            <Fragment key={`HvsR_${n.USER_ID}`}>
+                                {n.USER_ID === 'X3aLMnQhXuxrl6Xhi1fX' ?
+                                    <>{padLeadingZeros(n.count, 4)}x: Richard<br/></> :
+                                    <>{padLeadingZeros(n.count, 4)}x: Hanneke<br/></>}
+                            </Fragment>
+                        )
+                        : <Loading/>
+                }
+                </Rechts>
+            </>
+            }
+
             <Breed>
                 <h3>Algemeen</h3>
             </Breed>
@@ -275,7 +330,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {spelersEerste && spelersEerste.length > 0 ?
                     spelersEerste.map((s, i) =>
-                        i < 10 && <Fragment key={s.USER_ID}>
+                        i < 10 && <Fragment key={`spelersEerste_${s.USER_ID}`}>
                             {new Date(s.timestamp).toLocaleString('nl-NL', {
                                 weekday:'short',
                                 month:'short',
@@ -296,7 +351,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {spelersMeesteAntwoorden && spelersMeesteAntwoorden.length > 0 ?
                     spelersMeesteAntwoorden.map((s, i) =>
-                        i < 10 && <Fragment key={s.USER_ID}>
+                        i < 10 && <Fragment key={`spelersMeesteAntwoorden_${s.USER_ID}`}>
                             {padLeadingZeros(s.CORRECT_COUNT, 4)}x &mdash; <Spelerlink user_id={s.USER_ID} prijzen={false}
                                                                                        naam={s.DISPLAYNAME}/>
                             <br/>
@@ -310,7 +365,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {spelersMeesteWinsten && spelersMeesteWinsten.length > 0 ?
                     spelersMeesteWinsten.map((s, i) =>
-                        i < 10 && <Fragment key={s.USER_ID}>
+                        i < 10 && <Fragment key={`spelersMeesteWinsten_${s.USER_ID}`}>
                             {padLeadingZeros(s.WIN_COUNT, 4)}x &mdash; <Spelerlink user_id={s.USER_ID} prijzen={false}
                                                                                    naam={s.DISPLAYNAME}/>
                             <br/>
@@ -328,7 +383,7 @@ const Statistieken = ({setLoadAll}) => {
                 {rondesMeesteAntwoorden && rondesMeesteAntwoorden.length > 0 ?
                     rondesMeesteAntwoorden.map((s, i) =>
                         (i < 10 || s.CORRECT_COUNT === rondesMeesteAntwoorden[9].CORRECT_COUNT) &&
-                        <Fragment key={s.ronde}>
+                        <Fragment key={`rondesMeesteAntwoorden_${s.ronde}`}>
                             {padLeadingZeros(s.CORRECT_COUNT, 4)}x &mdash; <Rondelink ronde={s.ronde} inhoud={true}
                                                                                       text="ronde"/>
                             <br/>
@@ -343,7 +398,7 @@ const Statistieken = ({setLoadAll}) => {
                 {rondesMinsteAntwoorden && rondesMinsteAntwoorden.length > 0 ?
                     rondesMinsteAntwoorden.map((s, i) =>
                         (i < 10 || s.CORRECT_COUNT === rondesMinsteAntwoorden[9].CORRECT_COUNT) &&
-                        <Fragment key={s.ronde}>
+                        <Fragment key={`rondesMinsteAntwoorden_${s.ronde}`}>
                             {padLeadingZeros(s.CORRECT_COUNT, 4)}x &mdash; <Rondelink ronde={s.ronde} inhoud={true}
                                                                                       text="ronde"/>
                             <br/>
@@ -358,7 +413,7 @@ const Statistieken = ({setLoadAll}) => {
                 {rondesLangzaamsteWinsten && rondesLangzaamsteWinsten.length > 0 ?
                     rondesLangzaamsteWinsten.map((s, i) =>
                         i < 10 &&
-                        <Fragment key={s.ronde}>
+                        <Fragment key={`rondesLangzaamsteWinsten_${s.ronde}`}>
                             {Duration.fromMillis(s.SPEED_FIRST).toFormat(`h'u' mm'm' ss'.'SSS's'`)}{' '}
                             &mdash; <Rondelink ronde={s.ronde} inhoud={true}
                                                text="ronde"/>
@@ -386,7 +441,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {inzendingenSnelste && inzendingenSnelste.length > 0 ?
                     inzendingenSnelste.map((s) =>
-                        <Fragment key={s.timestamp}>
+                        <Fragment key={`inzendingenSnelste_${s.timestamp}`}>
                             {Duration.fromMillis(s.SPEED).toFormat(`s'.'SSS's'`)} &mdash;{' '}
                             <Spelerlink user_id={s.USER_ID} prijzen={false}/> &mdash;{' '}
                             <Rondelink ronde={s.ronde} inhoud={true} text="ronde"/>
@@ -401,7 +456,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {valreep && valreep.length > 0 ?
                     valreep.map((s, i) =>
-                        i < 10 && <Fragment key={s.timestamp}>
+                        i < 10 && <Fragment key={`valreep_${s.timestamp}`}>
                             {Duration.fromMillis(s.valreep).toFormat(`s'.'SSS's'`)} &mdash;{' '}
                             <Spelerlink user_id={s.USER_ID} prijzen={false}/> &mdash;{' '}
                             <Rondelink ronde={s.ronde} inhoud={true} text="ronde"/>
@@ -418,7 +473,7 @@ const Statistieken = ({setLoadAll}) => {
                     <>
                         {langsteSeries.map((s, i) =>
                             (i < 10 || s.LENGTH === langsteSeries[9].LENGTH) &&
-                            <Fragment key={`${s.SERIES[0].ronde}${s.USER_ID}`}>
+                            <Fragment key={`langsteSeries_${s.SERIES[0].ronde}${s.USER_ID}`}>
                                 {padLeadingZeros(s.LENGTH, 4)}x &mdash;{' '}
                                 <Spelerlink user_id={s.USER_ID} prijzen={false}/> &mdash;{' '}
                                 <Rondelink ronde={s.SERIES[0].ronde} text="rondes"/> t/m {' '}
@@ -438,7 +493,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {bronnen && bronnen.length > 0 && globals.CORRECT_COUNT ?
                     bronnen.map((s) =>
-                        <Fragment key={s.bron}>
+                        <Fragment key={`bronnen_${s.bron}`}>
                             {padLeadingZeros(s.count, 6)}x{' '}
                             ({globals && globals.CORRECT_COUNT && padLeadingZeros(Math.round(s.count / globals.CORRECT_COUNT * 1000) / 10, 4)}%):{' '}
                             {s.bron.replace('_', ' ')}
@@ -453,7 +508,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {mediums && mediums.length > 0 && globals.CORRECT_COUNT ?
                     mediums.map((s) =>
-                        <Fragment key={s.medium}>
+                        <Fragment key={`mediums_${s.medium}`}>
                             {padLeadingZeros(s.count, 6)}x{' '}
                             ({globals && globals.CORRECT_COUNT && padLeadingZeros(Math.round(s.count / globals.CORRECT_COUNT * 1000) / 10, 4)}%):{' '}
                             {s.medium.replace('_', ' ')}
@@ -472,7 +527,7 @@ const Statistieken = ({setLoadAll}) => {
                 {artiestenMeesteRondes && artiestenMeesteRondes.length > 0 ?
                     artiestenMeesteRondes.map((s, i) =>
                         (i < 10 || s.count === artiestenMeesteRondes[9].count) &&
-                        <Fragment key={s.artiest}>
+                        <Fragment key={`artiestenMeesteRondes_${s.artiest}`}>
                             {padLeadingZeros(s.count, 4)}x &mdash; {s.artiest}
                             <br/>
                         </Fragment>)
@@ -486,7 +541,7 @@ const Statistieken = ({setLoadAll}) => {
                 {artiestenMeesteAntwoorden && artiestenMeesteAntwoorden.length > 0 ?
                     artiestenMeesteAntwoorden.map((s, i) =>
                         (i < 10 || s.corrects === artiestenMeesteAntwoorden[9].corrects) &&
-                        <Fragment key={s.artiest}>
+                        <Fragment key={`artiestenMeesteAntwoorden_${s.artiest}`}>
                             {padLeadingZeros(s.corrects, 4)}x &mdash; {s.artiest}
                             <br/>
                         </Fragment>)
@@ -503,7 +558,7 @@ const Statistieken = ({setLoadAll}) => {
                 {jarenMeesteRondes && jarenMeesteRondes.length > 0 ?
                     jarenMeesteRondes.map((s, i) =>
                         (i < 10 || s.count === jarenMeesteRondes[9].count) &&
-                        <Fragment key={s.jaar}>
+                        <Fragment key={`jarenMeesteRondes_${s.jaar}`}>
                             {padLeadingZeros(s.count, 4)}x &mdash; {s.jaar}
                             <br/>
                         </Fragment>)
@@ -517,7 +572,7 @@ const Statistieken = ({setLoadAll}) => {
                 {jarenMeesteAntwoorden && jarenMeesteAntwoorden.length > 0 ?
                     jarenMeesteAntwoorden.map((s, i) =>
                         (i < 10 || s.corrects === jarenMeesteAntwoorden[9].corrects) &&
-                        <Fragment key={s.jaar}>
+                        <Fragment key={`jarenMeesteAntwoorden_${s.jaar}`}>
                             {padLeadingZeros(s.corrects, 4)}x &mdash; {s.jaar}
                             <br/>
                         </Fragment>)
@@ -531,7 +586,7 @@ const Statistieken = ({setLoadAll}) => {
                 {jarenOudste && jarenOudste.length > 0 ?
                     jarenOudste.map((s, i) =>
                         (i < 10 || s.jaar === jarenOudste[9].jaar) &&
-                        <Fragment key={s.jaar}>
+                        <Fragment key={`jarenOudste_${s.jaar}_${i}`}>
                             {s.jaar}: <Rondelink ronde={s.ronde} inhoud={true} text="ronde"/>
                             <br/>
                         </Fragment>)
@@ -547,7 +602,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {decenniaMeesteRondes && decenniaMeesteRondes.length > 0 ?
                     decenniaMeesteRondes.map((s, i) =>
-                        <Fragment key={`${s.decennium}${s.decennium + 9}`}>
+                        <Fragment key={`decenniaMeesteRondes_${s.decennium}${s.decennium + 9}`}>
                             {padLeadingZeros(s.count, 4)}x &mdash; {s.decennium}-{s.decennium + 9}
                             <br/>
                         </Fragment>)
@@ -560,7 +615,7 @@ const Statistieken = ({setLoadAll}) => {
             <Rechts>
                 {decenniaMeesteAntwoorden && decenniaMeesteAntwoorden.length > 0 ?
                     decenniaMeesteAntwoorden.map((s, i) =>
-                        <Fragment key={`${s.decennium}${s.decennium + 9}`}>
+                        <Fragment key={`decenniaMeesteAntwoorden_${s.decennium}${s.decennium + 9}`}>
                             {padLeadingZeros(s.corrects, 4)}x &mdash; {s.decennium}-{s.decennium + 9}
                             <br/>
                         </Fragment>)

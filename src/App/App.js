@@ -17,6 +17,7 @@ import {HuidigeRondeContext} from "../Contexts/HuidigeRonde"
 import {MessagesContext} from "../Contexts/Messages"
 import {UsersContext} from "../Contexts/Users"
 import Statistieken from "./Statistieken/Statistieken"
+import ScrollToTop from "./ScrollToTop"
 
 const Navigatie = loadable(() => import('./Navigatie/Navigatie'))
 const Speler = loadable(() => import('./Speler/Speler'))
@@ -272,6 +273,7 @@ const App = () => {
 
     return <div className="App">
         <BrowserRouter>
+            <ScrollToTop/>
             {/*{currentUserData && (!currentUserData.ALLOW_MESSAGES || currentUserData.ALLOW_MESSAGES!==false) && <Messages/>}*/}
             <Navigatie inloggen={(p) => inloggen(p)} uitloggen={() => uitloggen()}
                        showMessages={showMessages} toonMessages={() => toonMessages()}
