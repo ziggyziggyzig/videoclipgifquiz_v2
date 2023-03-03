@@ -132,3 +132,7 @@
 .inzendingen_doorklikker {
     cursor: pointer;
 }
+
+.inzendingen_tabel tbody>tr:hover {
+    background-color: var(--darkerblue);
+}
