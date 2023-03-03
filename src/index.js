@@ -1,9 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-import moment from 'moment'
-import 'moment/locale/nl'
-import {DateTime} from "luxon"
+import {DateTime, Settings} from "luxon"
 
 import './index.css'
 
@@ -22,9 +20,9 @@ import {MessagesProvider} from "./Contexts/Messages"
 
 // const App = lazy(() => import("./App/App"))
 
-moment.locale(`nl`)
-
 DateTime.local({locale:'nl'})
+
+Settings.defaultLocale = "nl";
 
 console.log(`Koekoek!`)
 

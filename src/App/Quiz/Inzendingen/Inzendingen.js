@@ -2,12 +2,12 @@ import {useContext, useEffect, useState} from "react"
 import {collection, onSnapshot, query, where} from "firebase/firestore"
 import {db} from "../../../Firebase/Firebase"
 import {Spelerlink} from "../../Links/Links"
-import moment from "moment-timezone"
 import "./Inzendingen.css"
 import {UsersContext} from "../../../Contexts/Users"
 import Loading from "../../Loading/Loading"
 import {CurrentUserContext} from "../../../Contexts/CurrentUser"
 import {ToonRondeContext} from "../../../Contexts/ToonRonde"
+import {DateTime} from "luxon"
 
 const Inzendingen = () => {
     const [inzendingen, setInzendingen] = useState([])
@@ -65,7 +65,7 @@ const Inzendingen = () => {
 
 const Inzending = ({inzending}) => {
     const [showDetails, setShowDetails] = useState(false)
-    const datumFormaat = {l:"dddd DD MMM HH:mm.ss", s:"dd HH:mm.ss"}
+    const datumFormaat = {l:"ccc dd LLL TT", s:"ccc TT"}
     const [{usersData}] = useContext(UsersContext)
     const [user, setUser] = useState(null)
     const [eigenInzending, setEigenInzending] = useState(false)
@@ -116,11 +116,11 @@ const Inzending = ({inzending}) => {
             <td style={{textAlign:'right'}}>
                 {!showDetails && <>
                     <div className="inzendingen_datum_lang">
-                        {moment.unix(Math.floor(inzending.timestamp / 1000)).format(datumFormaat.l)}
+                        {DateTime.fromMillis(inzending.timestamp).toFormat(datumFormaat.l)}
                         <span style={{fontSize:'0.6em', color:'rgba(0,0,0,0)'}}>.xxx</span>
                     </div>
                     <div className="inzendingen_datum_kort">
-                        {moment.unix(Math.floor(inzending.timestamp / 1000)).format(datumFormaat.s)}
+                        {DateTime.fromMillis(inzending.timestamp).toFormat(datumFormaat.s)}
                         <span style={{fontSize:'0.6em', color:'rgba(0,0,0,0)'}}>.xxx</span>
                     </div>
                 </>}
@@ -153,7 +153,7 @@ const Inzending = ({inzending}) => {
                 <td className="inzending_medium"/>
                 <td colSpan={2} style={{textAlign:'right'}}>
                     <div>
-                        {moment.unix(Math.floor(inzending.timestamp / 1000)).format(datumFormaat.l)}
+                        {DateTime.fromMillis(inzending.timestamp).toFormat(datumFormaat.l)}
                         <span style={{fontSize:'0.6em'}}>
                                 .{padLeadingZeros(inzending.timestamp - (Math.floor(inzending.timestamp / 1000) * 1000), 3)}
                             </span>

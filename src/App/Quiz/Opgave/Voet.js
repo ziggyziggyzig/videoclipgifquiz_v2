@@ -1,13 +1,13 @@
-import moment from "moment-timezone"
 import Invulding from "./Invulding"
 import {useContext} from "react"
 import {CurrentUserContext} from "../../../Contexts/CurrentUser"
 import {ToonRondeContext} from "../../../Contexts/ToonRonde"
+import {DateTime} from "luxon"
 
-const Voet = ({clipData,oudeRonde}) => {
+const Voet = ({clipData, oudeRonde}) => {
 
     const [{currentUserData}] = useContext(CurrentUserContext)
-    const [{toonRondeData}]=useContext(ToonRondeContext)
+    const [{toonRondeData}] = useContext(ToonRondeContext)
 
     if (toonRondeData) {
         return <>
@@ -46,7 +46,7 @@ const Voet = ({clipData,oudeRonde}) => {
                     </p>
                     {currentUserData && currentUserData.USER_ID && <Invulding/>}
                     <p className="font_serif_normal opgave_voet_sluitdatum"><i>insturen kan
-                        tot {moment(toonRondeData.eind).format("dddd D MMMM YYYY [20:15u]")}</i></p>
+                        tot {DateTime.fromMillis(toonRondeData.TIMESTAMP_END).toFormat("DDDD T' uur'")}.</i></p>
                 </>
             }
         </>

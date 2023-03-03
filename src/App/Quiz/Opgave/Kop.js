@@ -1,6 +1,6 @@
-import moment from "moment-timezone"
 import {useContext} from "react"
 import {ToonRondeContext} from "../../../Contexts/ToonRonde"
+import {DateTime} from "luxon"
 
 const Kop=({oudeRonde})=>{
     const [{toonRondeNummer,toonRondeData}]=useContext(ToonRondeContext)
@@ -16,7 +16,7 @@ const Kop=({oudeRonde})=>{
                     {toonRondeNummer}
                 </span>
             </h3>
-            <span className='font_serif_bold'><i>{moment(toonRondeData.start).format("dddd D MMMM YYYY [20:15u]")}</i></span>
+            <span className='font_serif_bold'><i>{DateTime.fromMillis(toonRondeData.TIMESTAMP_START).toFormat("DDDD T' uur'")}</i></span>
             <i className='font_serif_normal'><br/>seizoen {toonRondeData.SEASON}, dag {toonRondeData.EPISODE}</i>
             {toonRondeData.toelichting &&
                 <p className='font_serif_normal'>
