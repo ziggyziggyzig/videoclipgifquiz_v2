@@ -9,6 +9,7 @@ import Users from "./Users"
 import Cycles from "./Cycles"
 
 import './Admin.css'
+import PlayClip from "./PlayClip"
 
 const Admin = ({setLoadAll}) => {
     const [{currentUserData}] = useContext(CurrentUserContext)
@@ -19,9 +20,11 @@ const Admin = ({setLoadAll}) => {
     const [showUsers, setShowUsers] = useState(false)
     const [showCycles, setShowCycles] = useState(false)
 
-    useEffect(()=>{
+    const [playClip, setPlayClip] = useState(null)
+
+    useEffect(() => {
         setLoadAll()
-    },[setLoadAll])
+    }, [setLoadAll])
 
     return currentUserData && currentUserData.OWN_ACCOUNT && <div className="admin_content">
         <>
@@ -37,31 +40,33 @@ const Admin = ({setLoadAll}) => {
             </button>
             <button
                 style={{backgroundColor:showRondes ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowRondes(!showRondes)} className='button_groot'>
+                onClick={() => setShowRondes(!showRondes)} className="button_groot">
                 <i className="fa-sharp fa-regular fa-calendar-days"/>
             </button>
             <button
                 style={{backgroundColor:showInzendingen ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowInzendingen(!showInzendingen)} className='button_groot'>
+                onClick={() => setShowInzendingen(!showInzendingen)} className="button_groot">
                 <i className="fa-sharp fa-solid  fa-comment"/>
             </button>
             <button
                 style={{backgroundColor:showUsers ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowUsers(!showUsers)} className='button_groot'>
+                onClick={() => setShowUsers(!showUsers)} className="button_groot">
                 <i className="fa-sharp fa-solid  fa-users"/>
             </button>
             <button
                 style={{backgroundColor:showCycles ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowCycles(!showCycles)} className='button_groot'>
+                onClick={() => setShowCycles(!showCycles)} className="button_groot">
                 <i className="fa-sharp fa-solid  fa-arrows-spin"/>
             </button>
+            <br/>
         </>
         {showNieuweClip && <NieuweClip/>}
-        {showClips && <Clips/>}
-        {showRondes && <Rondes/>}
+        {showClips && <Clips playClip={(c) => setPlayClip(c)}/>}
+        {showRondes && <Rondes playClip={(c) => setPlayClip(c)}/>}
         {showInzendingen && <Inzendingen/>}
         {showUsers && <Users/>}
         {showCycles && <Cycles/>}
+        {playClip && <PlayClip clip={playClip} onHide={() => setPlayClip(null)}/>}
     </div>
 }
 
