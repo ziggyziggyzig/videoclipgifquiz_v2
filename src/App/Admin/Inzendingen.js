@@ -1,13 +1,15 @@
 import {useCallback, useContext, useEffect, useState} from "react"
 
-import {collection, doc, limit, orderBy, query, updateDoc, where, onSnapshot} from "firebase/firestore"
-import {db} from "../../Firebase/Firebase"
+import {collection, doc, limit, orderBy, query, updateDoc, where, onSnapshot, getDoc} from "firebase/firestore"
+import {adminFunctions, db} from "../../Firebase/Firebase"
 import {send_message} from "../../functions/messages"
 import {UsersContext} from "../../Contexts/Users"
+import {CurrentUserContext} from "../../Contexts/CurrentUser"
 
 const Inzendingen = () => {
     const [user, setUser] = useState(null)
     const [{usersData}] = useContext(UsersContext)
+    const [{currentUserData}] = useContext(CurrentUserContext)
     const [inzendingen, setInzendingen] = useState(null)
     const [loadNumber, setLoadNumber] = useState(50)
 
@@ -15,10 +17,36 @@ const Inzendingen = () => {
         let zekerweten = window.confirm(`"${inzending.tekst}" van ${inzending.userData.DISPLAYNAME} goedkeuren?`)
         if (zekerweten) {
             await updateDoc(doc(db, 'inzendingen', String(inzending.DOC_ID)), {beoordeling:3})
+            let rondeData = await getDoc(doc(db, 'rondes', String(inzending.ronde)))
+            let clipData = await getDoc(doc(db, 'clips', rondeData.data().clip))
+            let juiste_antwoord = clipData.data().antwoord || `${clipData.data().artiest} - ${clipData.data().titel}`
             await send_message({
                 to_user_id:inzending.USER_ID,
-                text:`Je antwoord '${inzending.tekst}' is alsnog goedgekeurd, gefeliciteerd!`
+                text:`Je antwoord '${inzending.tekst}' is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`
             })
+            if (inzending.bron === 'direct_message' && inzending.medium === 'twitter') {
+                let twitter_user = usersData.find(o => o.USER_ID === inzending.USER_ID)
+                await adminFunctions({
+                    context:'twitter',
+                    action:'send_dm',
+                    user:currentUserData.USER_ID,
+                    content:{
+                        dm_tekst:`Je antwoord "${inzending.tekst}" is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`,
+                        dm_id:twitter_user.TWITTER_UID_STR || String(twitter_user.TWITTER_UID)
+                    }
+                })
+            } else if (inzending.bron === 'direct_message' && inzending.medium === 'mastodon') {
+                let masto_user = usersData.find(o => o.USER_ID === inzending.USER_ID)
+                await adminFunctions({
+                    context:'mastodon',
+                    action:'send_dm',
+                    user:currentUserData.USER_ID,
+                    content:{
+                        dm_tekst:`Je antwoord "${inzending.tekst}" is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`,
+                        dm_account: masto_user.MASTODON_ACCOUNT
+                    }
+                })
+            }
             return loadInzendingen()
         } else {
             return true
