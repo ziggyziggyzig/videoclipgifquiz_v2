@@ -19,7 +19,7 @@ const Inzendingen = () => {
             await updateDoc(doc(db, 'inzendingen', String(inzending.DOC_ID)), {beoordeling:3})
             let rondeData = await getDoc(doc(db, 'rondes', String(inzending.ronde)))
             let clipData = await getDoc(doc(db, 'clips', rondeData.data().clip))
-            let juiste_antwoord = clipData.data().antwoord || `${clipData.data().artiest} - ${clipData.data().titel}`
+            let juiste_antwoord = clipData.data().antwoord || `'${clipData.data().titel}' van ${clipData.data().artiest}`
             await send_message({
                 to_user_id:inzending.USER_ID,
                 text:`Je antwoord '${inzending.tekst}' is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`
@@ -29,7 +29,7 @@ const Inzendingen = () => {
                 await adminFunctions({
                     context:'twitter',
                     action:'send_dm',
-                    user:currentUserData.USER_ID,
+                    user:currentUserData.AUTH_UID[0],
                     content:{
                         dm_tekst:`Je antwoord "${inzending.tekst}" is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`,
                         dm_id:twitter_user.TWITTER_UID_STR || String(twitter_user.TWITTER_UID)
@@ -40,7 +40,7 @@ const Inzendingen = () => {
                 await adminFunctions({
                     context:'mastodon',
                     action:'send_dm',
-                    user:currentUserData.USER_ID,
+                    user:currentUserData.AUTH_UID[0],
                     content:{
                         dm_tekst:`Je antwoord "${inzending.tekst}" is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`,
                         dm_account: masto_user.MASTODON_ACCOUNT
