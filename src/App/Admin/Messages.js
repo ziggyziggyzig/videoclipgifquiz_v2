@@ -1,5 +1,5 @@
 import {Fragment, useContext, useEffect, useState} from "react"
-import {collection, limit, onSnapshot, orderBy, query, where} from "firebase/firestore"
+import {collection, limit, onSnapshot, orderBy, query} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 import {UsersContext} from "../../Contexts/Users"
 import {DateTime} from "luxon"
@@ -37,12 +37,15 @@ const Messages = () => {
             </thead>
             <tbody>
             {messages.map((i, n) =>
-                <tr key={n} style={{backgroundColor:i.EXPIRES&&i.EXPIRES<Date.now()?'gray':undefined,borderBottom:i.EXPIRES&&i.EXPIRES<Date.now()?'1px solid var(--blue)':undefined}}>
-                    <td>{i.FOR_USER_ID === '*' ? '*' : usersData.find(o => o.USER_ID === i.FOR_USER_ID).DISPLAYNAME}</td>
+                <tr key={n} style={{
+                    backgroundColor:i.EXPIRES && i.EXPIRES < Date.now() ? 'gray' : undefined,
+                    borderBottom:i.EXPIRES && i.EXPIRES < Date.now() ? '1px solid var(--blue)' : undefined
+                }}>
+                    <td>{i.FOR_USER_ID === '*' ? '*' : usersData.find(o => o.USER_ID === i.FOR_USER_ID).DISPLAYNAME || ''}</td>
                     <td>{DateTime.fromMillis(i.TIMESTAMP).toLocaleString(DateTime.DATETIME_SHORT)}</td>
                     <td>{i.EXPIRES ? DateTime.fromMillis(i.EXPIRES).toLocaleString(DateTime.DATETIME_SHORT) : '-'}</td>
-                    <td>{i.READ && i.READ.length>0 && i.READ.map((r,nn)=>
-                        <Fragment key={nn}>{usersData.find(o => o.USER_ID === r).DISPLAYNAME}<br/></Fragment>
+                    <td>{i.READ && i.READ.length > 0 && i.READ.map((r, nn) =>
+                        <Fragment key={nn}>{usersData.find(o => o.USER_ID === r).DISPLAYNAME || ''}<br/></Fragment>
                     )}</td>
                     <td>{i.TEXT}</td>
                 </tr>
