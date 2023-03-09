@@ -10,6 +10,7 @@ import Cycles from "./Cycles"
 
 import './Admin.css'
 import PlayClip from "./PlayClip"
+import Messages from "./Messages"
 
 const Admin = ({setLoadAll}) => {
     const [{currentUserData}] = useContext(CurrentUserContext)
@@ -19,6 +20,7 @@ const Admin = ({setLoadAll}) => {
     const [showInzendingen, setShowInzendingen] = useState(false)
     const [showUsers, setShowUsers] = useState(false)
     const [showCycles, setShowCycles] = useState(false)
+    const [showMessages,setShowMessages]=useState(false)
 
     const [playClip, setPlayClip] = useState(null)
 
@@ -58,6 +60,11 @@ const Admin = ({setLoadAll}) => {
                 onClick={() => setShowCycles(!showCycles)} className="button_groot">
                 <i className="fa-sharp fa-solid  fa-arrows-spin"/>
             </button>
+            <button
+                style={{backgroundColor:showMessages ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => setShowMessages(!showMessages)} className="button_groot">
+                <i className="fa-regular fa-envelope"/>
+            </button>
             <br/>
         </>
         {showNieuweClip && <NieuweClip/>}
@@ -66,6 +73,7 @@ const Admin = ({setLoadAll}) => {
         {showInzendingen && <Inzendingen/>}
         {showUsers && <Users/>}
         {showCycles && <Cycles/>}
+        {showMessages && <Messages/>}
         {playClip && <PlayClip clip={playClip} onHide={() => setPlayClip(null)}/>}
     </div>
 }

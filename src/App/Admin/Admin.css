@@ -55,7 +55,7 @@ button, input, select {
 }
 
 input:disabled, button:disabled {
-    background-color: var(--darkblue);
+    background-color: gray;
     cursor: auto;
 }
 
@@ -111,7 +111,7 @@ input:disabled, button:disabled {
 }
 
 .admin_rondetabel_huidigeronde {
-    border: red 2px solid;
+    border: var(--yellow) 2px dashed;
 }
 
 .admin_rondetabel_edit {

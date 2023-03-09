@@ -14,7 +14,7 @@ const Cycles = () => {
                 content:{
                     mode:mode
                 },
-                user:currentUserData.USER_ID
+                user:currentUserData.AUTH_UID[0]
             })
         }
         return true
