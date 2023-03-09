@@ -41,7 +41,7 @@ const Messages = () => {
                     backgroundColor:i.EXPIRES && i.EXPIRES < Date.now() ? 'gray' : undefined,
                     borderBottom:i.EXPIRES && i.EXPIRES < Date.now() ? '1px solid var(--blue)' : undefined
                 }}>
-                    <td>{i.FOR_USER_ID === '*' ? '*' : usersData.find(o => o.USER_ID === i.FOR_USER_ID).DISPLAYNAME || ''}</td>
+                    <td>{i.FOR_USER_ID === '*' ? '*' : (usersData.find(o => o.USER_ID === i.FOR_USER_ID)?usersData.find(o => o.USER_ID === i.FOR_USER_ID).DISPLAYNAME:i.FOR_USER_ID)}</td>
                     <td>{DateTime.fromMillis(i.TIMESTAMP).toLocaleString(DateTime.DATETIME_SHORT)}</td>
                     <td>{i.EXPIRES ? DateTime.fromMillis(i.EXPIRES).toLocaleString(DateTime.DATETIME_SHORT) : '-'}</td>
                     <td>{i.READ && i.READ.length > 0 && i.READ.map((r, nn) =>
@@ -52,6 +52,7 @@ const Messages = () => {
             )}
             </tbody>
         </table>
+        <input type="button" onClick={() => setLoadNumber(loadNumber + 50)} value="50 meer..."/>
     </>
 }
 

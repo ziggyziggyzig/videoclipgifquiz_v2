@@ -48,7 +48,7 @@ const Users = () => {
             <hr/>
             <input type="button" disabled={toMergeLength !== 2}
                    onClick={() => setDoMerge(true)} value="samenvoegen"/><br/>
-            <table className='admin_tabel font_sans_normal'>
+            <table className="admin_tabel font_sans_normal">
                 <thead>
                 <tr>
                     <td/>
@@ -77,11 +77,14 @@ const Users = () => {
                         </td>
                         <td>{i.USER_ID}</td>
                         <td><>{i.TWITTER_UID_STR && alleUsers.filter(o => o.TWITTER_UID_STR === i.TWITTER_UID_STR).length > 1 &&
-                            <i className="fa-solid fa-triangle-exclamation rood"/> }{i.TWITTER_HANDLE}</></td>
+                            <i className="fa-solid fa-triangle-exclamation rood"/>}{i.TWITTER_HANDLE}</>
+                        </td>
                         <td><>{i.GOOGLE_UID && alleUsers.filter(o => o.GOOGLE_UID === i.GOOGLE_UID).length > 1 &&
-                            <i className="fa-solid fa-triangle-exclamation rood"/> }{i.GOOGLE_EMAIL || ''}</></td>
+                            <i className="fa-solid fa-triangle-exclamation rood"/>}{i.GOOGLE_EMAIL || ''}</>
+                        </td>
                         <td><>{i.MASTODON_ACCOUNT && alleUsers.filter(o => o.MASTODON_ACCOUNT === i.MASTODON_ACCOUNT).length > 1 &&
-                            <i className="fa-solid fa-triangle-exclamation rood"/> }{i.MASTODON_ACCOUNT || ''}</></td>
+                            <i className="fa-solid fa-triangle-exclamation rood"/>}{i.MASTODON_ACCOUNT || ''}</>
+                        </td>
                         <td>{i.donateur ? 'true' : 'false'}</td>
                         <td>{(i.ATTEMPT_FIRST && i.ATTEMPT_FIRST.timestamp) ? new Date(i.ATTEMPT_FIRST.timestamp).toLocaleDateString() : ''}</td>
                         <td>{i.CORRECT_COUNT || 0}</td>
@@ -146,6 +149,10 @@ const MergeUsers = ({users, done}) => {
         }
         await setDoc(doc(db, 'users_backup', `${users[order[0]].USER_ID}-${new Date().getTime()}`), users[order[0]])
         await setDoc(doc(db, 'users_backup', `${users[order[1]].USER_ID}-${new Date().getTime()}`), users[order[1]])
+        let m = await getDocs(query(collection(db, 'messages'), where('FOR_USER_ID', '==', users[order[1]].USER_ID)))
+        for (let d of m.docs) {
+            await updateDoc(doc(d.ref), {FOR_USER_ID:mergedUser.USER_ID})
+        }
         await updateDoc(doc(db, 'users', mergedUser.USER_ID), mergedUser)
         await deleteDoc(doc(db, 'users', users[order[1]].USER_ID))
         done()
@@ -154,7 +161,7 @@ const MergeUsers = ({users, done}) => {
     return <>
         {order.map((i, n) =>
             <Fragment key={i}>
-                <div style={{backgroundColor:n === 0 ? 'green' : 'red'}} className='font_sans_normal'>
+                <div style={{backgroundColor:n === 0 ? 'green' : 'red'}} className="font_sans_normal">
                     <h5>{users[i].USER_ID}</h5>
                     <span><b>auth_uids:</b> {JSON.stringify(users[i].AUTH_UID)}<br/></span>
                     <span><b>displayname:</b> {users[i].DISPLAYNAME}<br/></span>
@@ -193,7 +200,7 @@ const MergeUsers = ({users, done}) => {
             </Fragment>
         )}
         <h4 style={{textAlign:'center', color:'var(--darkblue)'}}><i className="fa-solid fa-equals"/></h4>
-        <div style={{backgroundColor:'green'}} className='font_sans_normal'>
+        <div style={{backgroundColor:'green'}} className="font_sans_normal">
             <h5>{mergedUser.USER_ID}</h5>
             <span><b>auth_uids:</b> {JSON.stringify(mergedUser.AUTH_UID)}<br/></span>
             <span><b>displayname:</b> {mergedUser.DISPLAYNAME}<br/></span>
@@ -216,7 +223,7 @@ const MergeUsers = ({users, done}) => {
         </div>
         <hr/>
         <input type="button" onClick={() => opslaan()} value="gereed"/>
-        <a id="knoppen" href='#'><input type="button" onClick={() => wissel()} value="wissel"/></a>
+        <a id="knoppen" href="#"><input type="button" onClick={() => wissel()} value="wissel"/></a>
     </>
 }
 
