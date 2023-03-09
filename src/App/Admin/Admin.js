@@ -14,13 +14,7 @@ import Messages from "./Messages"
 
 const Admin = ({setLoadAll}) => {
     const [{currentUserData}] = useContext(CurrentUserContext)
-    const [showClips, setShowClips] = useState(false)
-    const [showNieuweClip, setShowNieuweClip] = useState(false)
-    const [showRondes, setShowRondes] = useState(false)
-    const [showInzendingen, setShowInzendingen] = useState(false)
-    const [showUsers, setShowUsers] = useState(false)
-    const [showCycles, setShowCycles] = useState(false)
-    const [showMessages,setShowMessages]=useState(false)
+    const [showSection, setShowSection] = useState(null)
 
     const [playClip, setPlayClip] = useState(null)
 
@@ -31,49 +25,56 @@ const Admin = ({setLoadAll}) => {
     return currentUserData && currentUserData.OWN_ACCOUNT && <div className="admin_content">
         <>
             <button
-                style={{backgroundColor:showNieuweClip ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowNieuweClip(!showNieuweClip)} className="button_groot">
+                style={{backgroundColor:showSection === 'NieuweClip' ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => showSection === 'NieuweClip' ? setShowSection(null) : setShowSection('NieuweClip')}
+                className="button_groot">
                 <i className="fa-sharp fa-solid  fa-cloud-arrow-up" title="nieuwe clip"/>
             </button>
             <button
-                style={{backgroundColor:showClips ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowClips(!showClips)} className="button_groot">
+                style={{backgroundColor:showSection === 'Clips' ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => showSection === 'Clips' ? setShowSection(null) : setShowSection('Clips')}
+                className="button_groot">
                 <i className="fa-sharp fa-solid  fa-film"/>
             </button>
             <button
-                style={{backgroundColor:showRondes ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowRondes(!showRondes)} className="button_groot">
+                style={{backgroundColor:showSection === 'Rondes' ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => showSection === 'Rondes' ? setShowSection(null) : setShowSection('Rondes')}
+                className="button_groot">
                 <i className="fa-sharp fa-regular fa-calendar-days"/>
             </button>
             <button
-                style={{backgroundColor:showInzendingen ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowInzendingen(!showInzendingen)} className="button_groot">
+                style={{backgroundColor:showSection === 'Inzendingen' ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => showSection === 'Inzendingen' ? setShowSection(null) : setShowSection('Inzendingen')}
+                className="button_groot">
                 <i className="fa-sharp fa-solid  fa-comment"/>
             </button>
             <button
-                style={{backgroundColor:showUsers ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowUsers(!showUsers)} className="button_groot">
+                style={{backgroundColor:showSection === 'Users' ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => showSection === 'Users' ? setShowSection(null) : setShowSection('Users')}
+                className="button_groot">
                 <i className="fa-sharp fa-solid  fa-users"/>
             </button>
             <button
-                style={{backgroundColor:showCycles ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowCycles(!showCycles)} className="button_groot">
+                style={{backgroundColor:showSection === 'Cycles' ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => showSection === 'Cycles' ? setShowSection(null) : setShowSection('Cycles')}
+                className="button_groot">
                 <i className="fa-sharp fa-solid  fa-arrows-spin"/>
             </button>
             <button
-                style={{backgroundColor:showMessages ? 'var(--darkblue)' : 'var(--blue)'}}
-                onClick={() => setShowMessages(!showMessages)} className="button_groot">
+                style={{backgroundColor:showSection === 'Messages' ? 'var(--darkblue)' : 'var(--blue)'}}
+                onClick={() => showSection === 'Messages' ? setShowSection(null) : setShowSection('Messages')}
+                className="button_groot">
                 <i className="fa-regular fa-envelope"/>
             </button>
             <br/>
         </>
-        {showNieuweClip && <NieuweClip/>}
-        {showClips && <Clips playClip={(c) => setPlayClip(c)}/>}
-        {showRondes && <Rondes playClip={(c) => setPlayClip(c)}/>}
-        {showInzendingen && <Inzendingen/>}
-        {showUsers && <Users/>}
-        {showCycles && <Cycles/>}
-        {showMessages && <Messages/>}
+        {showSection === 'NieuweClip' && <NieuweClip/>}
+        {showSection === 'Clips' && <Clips playClip={(c) => setPlayClip(c)}/>}
+        {showSection === 'Rondes' && <Rondes playClip={(c) => setPlayClip(c)}/>}
+        {showSection === 'Inzendingen' && <Inzendingen/>}
+        {showSection === 'Users' && <Users/>}
+        {showSection === 'Cycles' && <Cycles/>}
+        {showSection === 'Messages' && <Messages/>}
         {playClip && <PlayClip clip={playClip} onHide={() => setPlayClip(null)}/>}
     </div>
 }

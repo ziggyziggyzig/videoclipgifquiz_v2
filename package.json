@@ -1,6 +1,6 @@
 {
   "name": "videoclipgifquiz",
-  "version": "2.2.19",
+  "version": "2.2.20",
   "private": true,
   "dependencies": {
     "@loadable/component": "^5.15.3",

@@ -1,5 +1,5 @@
 import {Fragment, useContext, useEffect, useState} from "react"
-import {collection, getDocs, onSnapshot, orderBy, query, where} from "firebase/firestore"
+import {collection, doc, getDocs, onSnapshot, orderBy, query, updateDoc, where} from "firebase/firestore"
 import {db} from "../../Firebase/Firebase"
 import {HuidigeRondeContext} from "../../Contexts/HuidigeRonde"
 import {DateTime} from "luxon"
@@ -17,7 +17,6 @@ const Rondes = ({playClip}) => {
     const [unusedClips, setUnusedclips] = useState([])
 
     const changeRondeData = (field, value) => {
-        console.log(field, value)
         let toState = {...editRondeData}
         toState[field] = value
         setEditRondeData(toState)
@@ -35,8 +34,27 @@ const Rondes = ({playClip}) => {
         setEditClipData(toState)
     }
 
-    const saveClipData = () => {
+    const saveRonde = async () => {
+        await updateDoc(doc(db, 'rondes', String(editRonde)), editRondeData)
+        await updateDoc(doc(db, 'clips', editClipData.id), editClipData)
+        if (editRondeData.clip !== rondes.find(o => o.ronde === editRonde).clip) {
+            await updateDoc(doc(db, 'clips', editRondeData.clip), {status:1})
+            let r = rondes.find(o => o.ronde === editRonde)
+            await updateDoc(doc(db, 'clips', r.clip), {status:0})
+        }
+        setEditRonde(null)
+    }
 
+    const switchClips = async (r1, r2) => {
+        let c1 = rondes.find(o => o.ronde === r1).clip
+        let c2 = rondes.find(o => o.ronde === r2).clip
+        updateDoc(doc(db, 'rondes', String(r1)), {
+            clip:c2
+        })
+        updateDoc(doc(db, 'rondes', String(r2)), {
+            clip:c1
+        })
+        return true
     }
 
     const test_regex = (pattern, string) => new RegExp(pattern, "ig").test(string)
@@ -46,7 +64,7 @@ const Rondes = ({playClip}) => {
             let alleClips = []
             let clip_snapshot = await getDocs(collection(db, 'clips'))
             for (let c of clip_snapshot.docs) {
-                alleClips.push(c.data())
+                alleClips.push({id:c.id, ...c.data()})
             }
             setClips(alleClips)
             let toState = []
@@ -69,7 +87,7 @@ const Rondes = ({playClip}) => {
                 setEditClipData(clips.find(o => o.id === r.clip))
                 let toUnusedClipsState = []
                 for (let c of clips) {
-                    if (c.status === 0 && !c.ronde) toUnusedClipsState.push(c)
+                    if (c.status === 0) toUnusedClipsState.push(c)
                 }
                 toUnusedClipsState.sort((a, b) => a.jaar === b.jaar ? a.artiest.localeCompare(b.artiest) : a.jaar - b.jaar)
                 setUnusedclips(toUnusedClipsState)
@@ -80,7 +98,7 @@ const Rondes = ({playClip}) => {
             }
         }
         loadData()
-    }, [editRonde, rondes])
+    }, [editRonde, rondes, clips])
 
     return rondes && rondes.length > 1 ? <table className="font_sans_normal admin_tabel admin_rondetabel">
             <thead>
@@ -107,7 +125,7 @@ const Rondes = ({playClip}) => {
                                 </button>
                             </td>
                             <td>
-                                <button>
+                                <button onClick={() => saveRonde()}>
                                     <i className="fa-solid fa-floppy-disk"/>
                                 </button>
                             </td>
@@ -166,12 +184,16 @@ const Rondes = ({playClip}) => {
                     <tr key={i.ronde}
                         className={i.ronde === huidigeRondeNummer ? 'admin_rondetabel_huidigeronde' : undefined}>
                         <td>
-                            <button disabled={i.ronde <= huidigeRondeNummer}>
+                            <button disabled={i.ronde <= huidigeRondeNummer + 1} onClick={() => {
+                                switchClips(i.ronde, i.ronde - 1)
+                            }}>
                                 <i className="fa-solid fa-chevron-up"/>
                             </button>
                         </td>
                         <td>
-                            <button disabled={i.ronde < huidigeRondeNummer || n === rondes.length - 1}>
+                            <button disabled={i.ronde < huidigeRondeNummer + 1 || n === rondes.length - 1} onClick={() => {
+                                switchClips(i.ronde, i.ronde + 1)
+                            }}>
                                 <i className="fa-solid fa-chevron-down"/>
                             </button>
                         </td>
@@ -185,10 +207,10 @@ const Rondes = ({playClip}) => {
                                 <i className="fa-solid fa-film"/>
                             </button>
                         </td>
-                        <td>
+                        <td style={{color:i.bonus ? 'white' : undefined}}>
                             {i.ronde}
                         </td>
-                        <td>
+                        <td style={{color:i.bonus ? 'white' : undefined}}>
                             {DateTime.fromMillis(i.TIMESTAMP_START).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}
                         </td>
                         <td style={{border:clips.find(o => o.id === i.clip).REGEX_ARTIST_CORRECT ? undefined : 'red 2px dashed'}}>

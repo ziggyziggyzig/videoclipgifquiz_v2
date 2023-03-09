@@ -22,7 +22,8 @@ const Inzendingen = () => {
             let juiste_antwoord = clipData.data().antwoord || `'${clipData.data().titel}' van ${clipData.data().artiest}`
             await send_message({
                 to_user_id:inzending.USER_ID,
-                text:`Je antwoord '${inzending.tekst}' is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`
+                text:`Je antwoord '${inzending.tekst}' is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`,
+                expiration:Date.now() + 86400000
             })
             if (inzending.bron === 'direct_message' && inzending.medium === 'twitter') {
                 let twitter_user = usersData.find(o => o.USER_ID === inzending.USER_ID)
@@ -43,7 +44,7 @@ const Inzendingen = () => {
                     user:currentUserData.AUTH_UID[0],
                     content:{
                         dm_tekst:`Je antwoord "${inzending.tekst}" is alsnog goedgekeurd, gefeliciteerd! (Het juiste antwoord was ${juiste_antwoord}.)`,
-                        dm_account: masto_user.MASTODON_ACCOUNT
+                        dm_account:masto_user.MASTODON_ACCOUNT
                     }
                 })
             }
