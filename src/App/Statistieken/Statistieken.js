@@ -601,7 +601,7 @@ const Statistieken = ({setLoadAll}) => {
             </Links>
             <Rechts>
                 {decenniaMeesteRondes && decenniaMeesteRondes.length > 0 ?
-                    decenniaMeesteRondes.map((s, i) =>
+                    decenniaMeesteRondes.map(s =>
                         <Fragment key={`decenniaMeesteRondes_${s.decennium}${s.decennium + 9}`}>
                             {padLeadingZeros(s.count, 4)}x &mdash; {s.decennium}-{s.decennium + 9}
                             <br/>
@@ -614,7 +614,7 @@ const Statistieken = ({setLoadAll}) => {
             </Links>
             <Rechts>
                 {decenniaMeesteAntwoorden && decenniaMeesteAntwoorden.length > 0 ?
-                    decenniaMeesteAntwoorden.map((s, i) =>
+                    decenniaMeesteAntwoorden.map(s =>
                         <Fragment key={`decenniaMeesteAntwoorden_${s.decennium}${s.decennium + 9}`}>
                             {padLeadingZeros(s.corrects, 4)}x &mdash; {s.decennium}-{s.decennium + 9}
                             <br/>
