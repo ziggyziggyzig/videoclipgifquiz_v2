@@ -271,7 +271,7 @@ const Erelijst = () => {
                 <h4>Langste serie overwinningen</h4>
                 <p>
                     {serieWinsten.map(w=>
-                    <Fragment key={`seriewinsten${w.USER_ID}`}>
+                    <Fragment key={`seriewinsten${w.SERIES[0]}`}>
                         <b>{w.DISPLAYNAME}</b> &mdash; {w.COUNT} overwinningen &mdash; <Rondelink
                         text="rondes" ronde={w.SERIES[0]}/> t/m <Rondelink
                         ronde={w.SERIES[w.COUNT - 1]}/><br/>
