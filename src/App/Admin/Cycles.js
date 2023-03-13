@@ -143,6 +143,15 @@ const Cycles = () => {
                 <td/>
             </tr>
             <tr>
+                <td>user win_series</td>
+                <td/>
+                <td/>
+                <td><i className="fa-regular fa-circle-check"/></td>
+                <td/>
+                <td/>
+                <td><i className="fa-regular fa-circle-check"/></td>
+            </tr>
+            <tr>
                 <td>user years_list</td>
                 <td/>
                 <td/>

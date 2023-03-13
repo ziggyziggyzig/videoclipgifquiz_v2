@@ -76,7 +76,7 @@ hr {
     grid-column: 1/3;
 }
 
-.win_count_list,.bonus_count_list,.fast_five_list,.slow_five_list,.series_list_list,.years_list_list,.decade_list_list {
+.win_count_list,.bonus_count_list,.fast_five_list,.slow_five_list,.series_list_list,.years_list_list,.decade_list_list,.win_series_list {
     font-size: 0.8em;
     display: none;
 }

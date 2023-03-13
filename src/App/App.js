@@ -130,7 +130,7 @@ const App = () => {
                 setToonLoginPagina(true)
             }
         }
-    },[dispatchCurrentUserData])
+    }, [dispatchCurrentUserData])
 
     const uitloggen = async () => {
         await signOut(auth)
@@ -154,7 +154,7 @@ const App = () => {
             }
             return true
         })
-    }, [dispatchCurrentUserData,processLogin])
+    }, [dispatchCurrentUserData, processLogin])
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, "tellers", "huidige_ronde"), async (d) => {
@@ -228,6 +228,7 @@ const App = () => {
                         CORRECT_COUNT,
                         SERIES_LIST,
                         WIN_COUNT,
+                        WIN_SERIES,
                         FAST_FIVE,
                         WIN_LIST,
                         donateur,
@@ -249,6 +250,7 @@ const App = () => {
                         CORRECT_COUNT:CORRECT_COUNT || 0,
                         SERIES_LIST:SERIES_LIST || [],
                         WIN_COUNT:WIN_COUNT || 0,
+                        WIN_SERIES:WIN_SERIES || [],
                         FAST_FIVE:FAST_FIVE || [],
                         TWITTER:!!TWITTER_UID_STR,
                         TWITTER_UID:TWITTER_UID_STR || String(TWITTER_UID) || null,
@@ -261,7 +263,7 @@ const App = () => {
                         donateur:donateur || false,
                         MEDIUM_COUNT:MEDIUM_COUNT || [],
                         BRON_COUNT:BRON_COUNT || [],
-                        CORRECT_FIRST: CORRECT_FIRST||[]
+                        CORRECT_FIRST:CORRECT_FIRST || []
                     })
                 }
                 dispatchUsers({type:"SET", usersData:toContext})
@@ -292,21 +294,21 @@ const App = () => {
                     <Routes>
                         {Array(['/speler', '/speler/:spelerId'].map(path =>
                             <Route key={path} path={path} element={
-                                <Speler setLoadAll={()=>setLoadAll(true)}/>
+                                <Speler setLoadAll={() => setLoadAll(true)}/>
                             }/>
                         ))}
-                        <Route path="/steun" element={<Steun setLoadAll={()=>setLoadAll(true)}/>}/>
-                        <Route path="/meta" element={<Meta setLoadAll={()=>setLoadAll(true)}/>}/>
-                        <Route path="/statistieken" element={<Statistieken setLoadAll={()=>setLoadAll(true)}/>}/>
+                        <Route path="/steun" element={<Steun setLoadAll={() => setLoadAll(true)}/>}/>
+                        <Route path="/meta" element={<Meta setLoadAll={() => setLoadAll(true)}/>}/>
+                        <Route path="/statistieken" element={<Statistieken setLoadAll={() => setLoadAll(true)}/>}/>
                         <Route path="/overzichten" element={
-                            <Overzichten setLoadAll={()=>setLoadAll(true)}/>
+                            <Overzichten setLoadAll={() => setLoadAll(true)}/>
                         }/>
                         {Array(['/', '/ronde', '/ronde/:rondeId'].map(path =>
                             <Route key={path} path={path} element={
-                                <Quiz loadAll={loadAll} setLoadAll={()=>setLoadAll(true)}/>
+                                <Quiz loadAll={loadAll} setLoadAll={() => setLoadAll(true)}/>
                             }/>
                         ))}
-                        <Route path="/admin" element={<Admin setLoadAll={()=>setLoadAll(true)}/>}/>
+                        <Route path="/admin" element={<Admin setLoadAll={() => setLoadAll(true)}/>}/>
                     </Routes>
                 }
             </div>

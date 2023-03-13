@@ -46,7 +46,14 @@ const Speler = ({setLoadAll}) => {
             if (currentUserData && spelerId) spelerId === currentUserData.USER_ID && setOwnProfile(true)
             let spelerDoc = await getDoc(doc(db, 'users', spelerId))
             if (spelerDoc) {
-                setSpelerData(spelerDoc.data())
+                if (spelerDoc.data().WIN_SERIES) {
+                    let w = [...spelerDoc.data().WIN_SERIES]
+                    w.sort((a, b) => parseInt(a.SERIES[0],10) - parseInt(b.SERIES[0],10))
+                    setSpelerData({WIN_SERIES:w, ...spelerDoc.data()})
+                } else {
+                    setSpelerData(spelerDoc.data())
+                }
+
                 setNewDisplayName(spelerDoc.data().DISPLAYNAME)
             }
         }
@@ -235,6 +242,31 @@ const Speler = ({setLoadAll}) => {
                         </Fragment>
                 )}
                 <Lijn list="win_count_list"/>
+
+                {spelerData.WIN_SERIES && spelerData.WIN_SERIES.length > 0 &&
+                    <>
+                        <Links>
+                            series opeenvolgende overwinningen
+                        </Links>
+                        <Rechts>
+                            {spelerData.WIN_SERIES.length} series <span
+                            className="lijstklikker"
+                            onClick={() => toggle('win_series_list', 'table-row')}>(klik voor een overzicht)</span>
+                        </Rechts>
+                        {spelerData.WIN_SERIES.map((w, i) =>
+                            <Fragment key={`WIN_SERIES_${i}`}>
+                                <Links list="win_series_list">
+                                    {w.COUNT}x:
+                                </Links>
+                                <Rechts list="win_series_list">
+                                    <Rondelink ronde={w.SERIES[0]} text="rondes"/> t/m <Rondelink
+                                    ronde={w.SERIES[w.SERIES.length - 1]}/>
+                                    {w.SERIES[w.SERIES.length - 1] >= huidigeRondeNummer - 1 && ' *'}
+                                </Rechts>
+                            </Fragment>
+                        )}
+                    </>
+                }
 
                 <Links>
                     bonusrondes beantwoord
