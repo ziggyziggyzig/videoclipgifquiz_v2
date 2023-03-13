@@ -300,7 +300,7 @@ const Statistieken = ({setLoadAll}) => {
             </Links>
             <Rechts>
                 {huidigeRondeNummer && globals && globals.CLIP_PLANNED && globals.CLIP_UNPLANNED && <>
-                    {huidigeRondeNummer + (Math.floor(huidigeRondeNummer / 100) * 4) + globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
+                    {globals.CLIP_COUNT}<br/>
                     <i>waarvan nog niet gebruikt</i>: {globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
                     <i>waarvan ingepland</i>:{globals.CLIP_PLANNED}
                 </>

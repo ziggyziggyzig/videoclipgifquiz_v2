@@ -177,7 +177,7 @@ const Erelijst = () => {
             </p>
             <p>
                 <b>Aantal gemaakte
-                    fragmenten</b>: {huidigeRondeNummer + (Math.floor(huidigeRondeNummer / 100) * 4) + globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
+                    fragmenten</b>: {globals.CLIP_COUNT}<br/>
                 <b>Aantal fragmenten nog niet gebruikt</b>: {globals.CLIP_UNPLANNED + globals.CLIP_PLANNED}<br/>
                 <b>waarvan ingepland</b>: {globals.CLIP_PLANNED}
             </p>
