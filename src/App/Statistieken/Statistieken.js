@@ -23,6 +23,7 @@ const Statistieken = ({setLoadAll}) => {
     const [spelersEerste, setSpelersEerste] = useState([])
     const [spelersMeesteAntwoorden, setSpelersMeesteAntwoorden] = useState([])
     const [spelersMeesteWinsten, setSpelersMeesteWinsten] = useState([])
+    const [spelersLangsteSerieWinsten,setSpelersLangsteSerieWinsten]=useState([])
 
     const [rondesMeesteAntwoorden, setRondesMeesteAntwoorden] = useState([])
     const [rondesMinsteAntwoorden, setRondesMinsteAntwoorden] = useState([])
@@ -60,6 +61,8 @@ const Statistieken = ({setLoadAll}) => {
         const parseSpelers = async () => {
             let spelersDataToState = []
             let seriesToState = []
+            let serieWinstenToState=[]
+
             for (let u of usersData) {
                 if (u.DISPLAYNAME && u.CORRECT_FIRST && u.CORRECT_FIRST.ronde && u.CORRECT_FIRST.timestamp) {
                     spelersDataToState.push({
@@ -76,13 +79,23 @@ const Statistieken = ({setLoadAll}) => {
                         seriesToState.push({USER_ID:u.USER_ID, ...s})
                     }
                 }
+                if (u.WIN_SERIES && u.WIN_SERIES.length > 0) {
+                    for (let s of u.WIN_SERIES) {
+                        serieWinstenToState.push({USER_ID:u.USER_ID, ...s})
+                    }
+                }
             }
+
             setSpelersEerste([...spelersDataToState].sort((a, b) => a.timestamp - b.timestamp).slice(0, 10))
             setSpelersMeesteAntwoorden([...spelersDataToState].sort((a, b) => b.CORRECT_COUNT - a.CORRECT_COUNT).slice(0, 20))
             setSpelersMeesteWinsten([...spelersDataToState].sort((a, b) => b.WIN_COUNT - a.WIN_COUNT).slice(0, 20))
 
+            serieWinstenToState.sort((a, b) => a.COUNT === b.COUNT ? a.SERIES[0] - b.SERIES[0] : b.COUNT - a.COUNT)
+            setSpelersLangsteSerieWinsten(serieWinstenToState)
+
             seriesToState.sort((a, b) => a.LENGTH === b.LENGTH ? a.SERIES[0].ronde - b.SERIES[0].ronde : b.LENGTH - a.LENGTH)
             setLangsteSeries(seriesToState.slice(0, 20))
+
         }
         if (usersData && usersData.length > 0) parseSpelers()
     }, [usersData])
@@ -479,6 +492,28 @@ const Statistieken = ({setLoadAll}) => {
                                 <Rondelink ronde={s.SERIES[0].ronde} text="rondes"/> t/m {' '}
                                 <Rondelink ronde={s.SERIES[s.SERIES.length - 1].ronde}/>{' '}
                                 {s.SERIES[s.SERIES.length - 1].ronde >= huidigeRondeNummer - 1 && <>*</>}
+                                <br/>
+                            </Fragment>)
+                        }
+                        &nbsp;<i>* lopende serie</i>
+                    </>
+                    :
+                    <Loading/>}
+            </Rechts>
+            <Links>
+                langste series opeenvolgende overwinningen
+            </Links>
+            <Rechts>
+                {spelersLangsteSerieWinsten && spelersLangsteSerieWinsten.length > 0 ?
+                    <>
+                        {spelersLangsteSerieWinsten.map((s, i) =>
+                            (i < 10 || s.COUNT === langsteSeries[9].COUNT) &&
+                            <Fragment key={`langsteSeries_${s.SERIES[0]}${s.USER_ID}`}>
+                                {padLeadingZeros(s.COUNT, 4)}x &mdash;{' '}
+                                <Spelerlink user_id={s.USER_ID} prijzen={false}/> &mdash;{' '}
+                                <Rondelink ronde={s.SERIES[0]} text="rondes"/> t/m {' '}
+                                <Rondelink ronde={s.SERIES[s.SERIES.length - 1]}/>{' '}
+                                {s.SERIES[s.SERIES.length - 1] >= huidigeRondeNummer - 1 && <>*</>}
                                 <br/>
                             </Fragment>)
                         }

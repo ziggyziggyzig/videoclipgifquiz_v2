@@ -47,9 +47,10 @@ const Speler = ({setLoadAll}) => {
             let spelerDoc = await getDoc(doc(db, 'users', spelerId))
             if (spelerDoc) {
                 if (spelerDoc.data().WIN_SERIES) {
-                    let w = [...spelerDoc.data().WIN_SERIES]
-                    w.sort((a, b) => parseInt(a.SERIES[0],10) - parseInt(b.SERIES[0],10))
-                    setSpelerData({WIN_SERIES:w, ...spelerDoc.data()})
+                    let w = spelerDoc.data().WIN_SERIES
+                    console.log(w)
+                    w.sort((a, b) => a.SERIES[0] - b.SERIES[0])
+                    setSpelerData({...spelerDoc.data(),WIN_SERIES:w})
                 } else {
                     setSpelerData(spelerDoc.data())
                 }

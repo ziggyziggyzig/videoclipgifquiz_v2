@@ -12,6 +12,7 @@ import {Link} from "react-router-dom"
 
 const Erelijst = () => {
     const [meesteWinsten, setMeesteWinsten] = useState(null)
+    const [serieWinsten, setSerieWinsten] = useState(null)
     const [meesteGoed, setMeesteGoed] = useState(null)
     const [snelsteAntwoord, setSnelsteAntwoord] = useState([])
     const [langzaamsteWinst, setLangzaamsteWinst] = useState(null)
@@ -162,6 +163,24 @@ const Erelijst = () => {
 
                 setLangsteSerie(langste_serie)
 
+                let langste_serie_winsten = [{COUNT:0}]
+
+                for (let user_doc of users_snap.docs) {
+                    if (user_doc.data().WIN_SERIES && user_doc.data().WIN_SERIES.length > 0) {
+                        for (let serie of user_doc.data().WIN_SERIES) {
+                            if (serie.COUNT > langste_serie_winsten[0].COUNT) {
+                                langste_serie_winsten = [{DISPLAYNAME:user_doc.data().DISPLAYNAME, ...serie}]
+                            } else if (serie.COUNT === langste_serie_winsten[0].COUNT) {
+                                langste_serie_winsten.push({DISPLAYNAME:user_doc.data().DISPLAYNAME, ...serie})
+                            }
+                        }
+                    }
+                }
+
+                console.log(langste_serie_winsten)
+                langste_serie_winsten.sort((a,b)=>a.SERIES[0]-b.SERIES[0])
+
+                setSerieWinsten(langste_serie_winsten)
 
             }
         }
@@ -247,6 +266,20 @@ const Erelijst = () => {
             </p>
             <hr/>
         </> : <Loading/>}
+        {serieWinsten && serieWinsten.length > 0 ?
+            <>
+                <h4>Langste serie overwinningen</h4>
+                <p>
+                    {serieWinsten.map(w=>
+                    <Fragment key={`seriewinsten${w.USER_ID}`}>
+                        <b>{w.DISPLAYNAME}</b> &mdash; {w.COUNT} overwinningen &mdash; <Rondelink
+                        text="rondes" ronde={w.SERIES[0]}/> t/m <Rondelink
+                        ronde={w.SERIES[w.COUNT - 1]}/><br/>
+                    </Fragment>
+                    )}
+                </p>
+                <hr/>
+            </> : <Loading/>}
         {meesteInRonde && meesteInRonde.aantal && meesteInRonde.rondes && meesteInRonde.rondes.length > 0 ? <>
             <h4>Ronde{meesteInRonde.rondes.length > 1 && 's'} met de meeste antwoorden</h4>
             <p>
@@ -357,7 +390,7 @@ const Erelijst = () => {
             </p>
             <hr/>
         </> : <Loading/>}
-        <p><i><Link to='/statistieken'>klik hier</Link> voor meer statistieken</i></p>
+        <p><i><Link to="/statistieken">klik hier</Link> voor meer statistieken</i></p>
     </div>
 }
 
